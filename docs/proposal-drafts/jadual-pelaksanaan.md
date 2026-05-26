@@ -28,12 +28,16 @@ Walaupun secara rasmi pembangunan hanya bermula 23 Mei, pembekal yang serius aka
 | Analisis spesifikasi & jadual pematuhan | ✅ Sedang dibuat | Telah selesai fasa pemahaman |
 | Cadangan reka bentuk sistem (Lampiran 1) | ✅ Selesai | Lihat `diagram-sistem.md` |
 | Cadangan komponen perisian (Jadual Perkhidmatan) | ✅ Selesai | Lihat `jadual-perkhidmatan.md` |
+| **Senibina AWS terperinci (Well-Architected)** | ✅ Selesai | Lihat `aws-architecture.md` |
 | Senibina API dan skema pangkalan data | 🔄 Dalam perancangan | Draft awal untuk URS |
 | Scaffolding repository (greenfield) | ✅ Selesai | Lihat `README.md`, `CLAUDE.md` |
+| **Penyediaan AWS Organization + akaun untuk RTM** | ⏳ Akan datang | Akaun didaftar atas nama RTM, Stream.My sebagai operator IAM |
+| **Pembukaan akaun Cloudflare Business** | ⏳ Akan datang | Standby untuk Day-1 DNS + WAF |
+| **Permohonan AWS region `ap-southeast-5` quota** | ⏳ Akan datang | Ada limit lalai untuk Fargate, RDS — mesti minta peningkatan awal |
 | Penyediaan template URS untuk sesi awal RTM | ⏳ Akan datang | Sebelum SST |
-| Pemilihan vendor S3, domain pendaftaran, sijil SSL | ⏳ Akan datang | Standby untuk diaktifkan pasca-SST |
-| Permohonan E-Vetting CGSO untuk pasukan teknikal | ⏳ Akan datang | Tempoh pemprosesan ~2-4 minggu — mesti mula sebelum SST |
+| **Permohonan E-Vetting CGSO untuk pasukan teknikal** | ⏳ Akan datang | Tempoh pemprosesan ~2-4 minggu — mesti mula sebelum SST |
 | Standby Bon Pelaksanaan + Insurans | ⏳ Akan datang | Wajib siap untuk serahan 22 Mei |
+| **Terraform IaC modules pre-write** | ⏳ Akan datang | VPC, ECS, RDS, ElastiCache, S3 modules sedia untuk apply pada Day 1 |
 
 ---
 
@@ -112,18 +116,25 @@ gantt
 
 ### Fasa 0 — Mobilisasi (23–29 Mei 2026, 7 hari)
 
-**Objektif:** Sistem asas berdiri, pasukan boleh mula coding modul Pendaftaran.
+**Objektif:** AWS infrastruktur live di `ap-southeast-5`, sistem asas berdiri, pasukan boleh mula coding modul Pendaftaran.
 
 | Tugas | Output | Spec § |
 |---|---|---|
-| Repo Git aktif dengan struktur `backend/` + `frontend/` | Repo bersedia untuk multi-developer | 2.1.22 |
-| Laravel 11 + Sanctum + Spatie Permission terpasang | API root response 200, login skeleton | 3.2.1 |
-| React 18 + Bootstrap 5 + Vite terpasang | SPA build clean, kosong tapi boleh hit API | 3.1.3, 3.2.2 |
-| Server staging aktif (Nginx + PHP-FPM + MySQL + Redis + S3) | URL staging boleh diakses | 3.5.1 |
-| Domain pre-prod aktif (sub.juniorinnovathon.rtm.gov.my) | DNS + SSL aktif | 3.8.1(f) |
+| **Terraform apply: VPC + Subnet + Security Groups** (modul telah pre-written semasa pra-SST) | VPC ready di `ap-southeast-5` | 3.5.1 |
+| **Terraform apply: RDS MySQL Multi-AZ + ElastiCache Redis** | DB + cache live, KMS encrypted | 3.5.1, 3.5.2 |
+| **Terraform apply: ECS Fargate cluster + ALB + ECR** | Compute cluster ready | 3.5.1 |
+| **Terraform apply: S3 buckets** (uploads, SPA, backups) | 3 bucket dengan KMS, versioning, lifecycle policy | 3.11.4(a) |
+| **Terraform apply: CloudWatch + GuardDuty + Security Hub** | Threat detection + monitoring aktif | 3.8.1(g) |
+| **Terraform apply: AWS Backup plan** | Policy harian/mingguan/bulanan aktif | 3.11.4(a) |
+| **Cloudflare zone setup** untuk `juniorinnovathon.rtm.gov.my` | DNS proxy aktif, WAF rule sets live | 3.8.1(f)(g) |
+| **ACM cert request** untuk domain | TLS 1.2+ cert attached ke ALB | 3.8.1(f) |
+| Repo Git aktif dengan struktur `backend/` + `frontend/` + `infrastructure/` | Repo bersedia untuk multi-developer | 2.1.22 |
+| Laravel 11 + Sanctum + Spatie Permission containerised | Image dipush ke ECR, deploy ke ECS Fargate | 3.2.1 |
+| React 18 + Bootstrap 5 + Vite — build deploy ke S3 SPA bucket | URL pre-prod boleh diakses melalui Cloudflare | 3.1.3, 3.2.2 |
+| **GitHub Actions OIDC trust + pipeline CI/CD** | Push to `main` → ECR → ECS deploy automatic | — |
 | URS sesi 1 dengan RTM (refine spesifikasi) | Minit URS disahkan dalam 5 hari (§ 2.1.16) | 2.1.16 |
 
-**Deliverable:** Demo "Hello World" — pendaftar guru boleh log in, lihat dashboard kosong.
+**Deliverable:** Demo "Hello World" — pendaftar guru boleh log in melalui Cloudflare → ALB → ECS Fargate, dengan data tersimpan di RDS MySQL di Malaysia region. CloudWatch dashboard menunjukkan request flow lengkap.
 
 ---
 
@@ -337,13 +348,18 @@ gantt
 
 | Risiko | Impak | Mitigasi |
 |---|---|---|
-| **7 hari sahaja** dari mula development ke "sistem live 30 Mei" | Modul Pendaftaran mungkin tidak siap | Mula scaffolding + reka bentuk semasa fasa pra-SST; gunakan template Laravel + Filament admin sebagai asas |
+| **7 hari sahaja** dari mula development ke "sistem live 30 Mei" | Modul Pendaftaran mungkin tidak siap | Terraform IaC modules pre-written semasa pra-SST; AWS infrastructure provisioned dalam < 2 jam pada Day 1 |
+| **AWS account ownership tidak jelas** | Handover § 3.14 jadi rumit | Sahkan dengan RTM **sebelum SST** — sebaiknya RTM-owned account dengan Stream.My IAM operator |
+| **AWS quota lalai tidak mencukupi** di `ap-southeast-5` | Fargate / RDS / Cloudfront tidak boleh provision | Mohon quota increase **sebelum SST** untuk Fargate vCPU, RDS instance limit, S3 bucket limit |
+| **AWS Malaysia region (`ap-southeast-5`) services baru** | Perkhidmatan tertentu mungkin belum sedia | Sahkan service availability untuk: Fargate, RDS MySQL, ElastiCache, S3, ACM, GuardDuty. Fallback ke `ap-southeast-1` jika perlu (kompromi data residency) |
 | Akses Pangkalan Data Sekolah lambat diluluskan | Pendaftaran tidak boleh validasi sekolah | Fallback: import CSV manual dari KPM; tubuhkan saluran komunikasi awal dengan unit data RTM |
 | Kelulusan OpenAI API + WhatsApp Business akaun lambat | Chatbot terlewat | Mohon akaun awal (sebelum SST); fallback chatbot kepada keyword-matching jika OpenAI terlewat |
 | E-Vetting CGSO ambil masa 2-4 minggu | Pasukan teknikal tidak boleh masuk premis RTM | Mula proses E-Vetting **sebelum** SST untuk pasukan teras |
-| Stress test gagal pada 5000 concurrent user | Sistem crash semasa rakaman studio | Load test dari Fasa 6; siapkan Redis cache + CDN; auto-scaling server jika perlu |
+| Stress test gagal pada 5000 concurrent user | Sistem crash semasa rakaman studio | Load test dari Fasa 6; ECS auto-scale 2→10 tasks; ElastiCache Redis + Cloudflare CDN cache; RDS read replica jika perlu |
 | Juri tidak biasa dengan sistem tablet | Latency penjurian semasa rakaman | Latihan tambahan + dry-run sebelum 12 Sep; UI yang sangat ringkas |
-| Downtime semasa rakaman | Krisis besar untuk RTM | Pasukan on-site 24/7 sepanjang 12 Sep – 1 Nov; backup hot standby; rollback plan |
+| Downtime AWS region semasa rakaman | Krisis besar untuk RTM | RDS Multi-AZ auto-failover < 60s; pasukan on-site 24/7; cross-region replica (`ap-southeast-1`) untuk DR manual failover; rollback plan via ECS task definition revisions |
+| **Cloudflare TLS termination concerns** | RTM bantah pemprosesan trafik di edge global | Fallback: switch ke AWS CloudFront + Shield Advanced (~+USD 3,000/bulan); atau aktifkan Cloudflare Data Localization Suite (Enterprise) |
+| Kos AWS melebihi anggaran | Overrun belanjawan | CloudWatch billing alarm setiap minggu; Compute Savings Plan + RDS RI selepas 30 hari steady-state; Right-Sizing Recommendations |
 
 ---
 
@@ -352,13 +368,13 @@ gantt
 | Peranan | Tempoh | Tanggungjawab utama |
 |---|---|---|
 | Project Lead | Sepanjang kontrak | Penyelaras RTM, minit URS, pelaporan |
-| Backend Developer (Laravel) × 2 | Sepanjang development | API, DB, integrasi S3/OpenAI/WhatsApp |
+| Backend Developer (Laravel) × 2 | Sepanjang development | API, DB schema, integrasi S3/OpenAI/WhatsApp/SES |
 | Frontend Developer (React) × 2 | Sepanjang development | SPA, Bootstrap, dashboard, LED display |
-| DevOps / Sysadmin × 1 | Sepanjang kontrak | Server, CI/CD, monitoring, backup, security |
-| QA Engineer × 1 | Fasa 6–7 | UAT, FAT, automated testing |
-| On-site Support × 2 | 12 Sep – 1 Nov | Standby di studio sepanjang rakaman |
+| **AWS DevOps / Cloud Engineer × 1** | Sepanjang kontrak | Terraform IaC, ECS Fargate, RDS, ElastiCache, CloudWatch, GuardDuty, AWS Backup, cost optimization, IAM, Cloudflare config |
+| QA Engineer × 1 | Fasa 6–7 | UAT, FAT, automated testing (PHPUnit + Vitest + Playwright) |
+| On-site Support × 2 | 12 Sep – 1 Nov | Standby di studio sepanjang rakaman + monitor CloudWatch alarms |
 | Trainer × 1 | Fasa 7 | Latihan SuperAdmin + Juri |
-| 24/7 Helpdesk Operator × 2 (shift) | Sepanjang kontrak | Helpdesk WhatsApp/email/ticketing |
+| 24/7 Helpdesk Operator × 2 (shift) | Sepanjang kontrak | Helpdesk WhatsApp/email/ticketing; respons PagerDuty alarm |
 
 **Nota:** Semua kakitangan WAJIB lulus E-Vetting CGSO (§ 2.1.8). Pekerja Rohingya **tidak dibenarkan** masuk premis RTM (§ 2.3.1).
 

@@ -41,36 +41,67 @@ The platform will handle:
 |---|---|
 | Frontend | React 18, TypeScript, Vite, Bootstrap 5, React Router, React Query, Axios |
 | Backend | Laravel (latest), PHP 8.3+, Sanctum (SPA auth), Spatie Permission |
-| Database | MySQL 8 |
-| Object storage | S3-compatible (videos, slides, certificate PDFs) |
-| Web server | Apache / Nginx |
-| Cache & queue | Redis |
+| Database | MySQL 8 (on Amazon RDS Multi-AZ) |
+| Object storage | Amazon S3 (videos, slides, certificate PDFs) |
+| Cache & queue | Redis (on Amazon ElastiCache Multi-AZ) |
 | Real-time (Phase 2) | Laravel Reverb (WebSockets) |
 
-Laravel, Apache/Nginx, and MySQL are mandated by the tender (Lampiran 1). React + Bootstrap 5 is the chosen frontend stack.
+Laravel and MySQL are mandated by the tender (Lampiran 1). React + Bootstrap 5 is the chosen frontend stack.
+
+## Cloud & infrastructure
+
+| Concern | Service |
+|---|---|
+| Cloud provider | **AWS** — region `ap-southeast-5` (Malaysia, KL) for data residency |
+| Compute | **ECS Fargate** Multi-AZ, auto-scaling |
+| Load balancer | **Application Load Balancer (ALB)** with ACM TLS |
+| Database | **Amazon RDS for MySQL 8** Multi-AZ |
+| Cache | **Amazon ElastiCache for Redis** Multi-AZ |
+| Object storage | **Amazon S3** (uploads + SPA + backup buckets) |
+| Backup | **AWS Backup** + cross-region replication to `ap-southeast-1` |
+| Edge | **Cloudflare Business** (CDN + WAF + DDoS) in front of AWS |
+| Secrets | **AWS Secrets Manager** + Parameter Store |
+| Security | **GuardDuty + Security Hub + KMS + WAF + CloudTrail** |
+| Observability | **CloudWatch** (logs, metrics, alarms) + **X-Ray** |
+| Email | **Amazon SES** |
+| IaC | **Terraform** modules in `infrastructure/` |
+| CI/CD | **GitHub Actions** with OIDC → ECR → ECS |
+
+Architecture follows AWS Well-Architected Framework (6 pillars). Full details in [`docs/proposal-drafts/aws-architecture.md`](./docs/proposal-drafts/aws-architecture.md).
 
 ## Architecture
 
-3-tier, with frontend and backend separated and communicating only via JSON API:
+3-tier, with frontend and backend separated and communicating only via JSON API. Deployed on AWS in Malaysia region with Cloudflare as edge:
 
 ```
 ┌─────────────────────────────────────────────┐
-│  Presentation Tier (React SPA)              │
+│  Presentation Tier (React SPA on S3)        │
 │  ├── Guru  (teacher / submitter)            │
 │  ├── Juri  (judge)                          │
 │  ├── Admin                                  │
 │  └── Awam  (public)                         │
 └────────────────────┬────────────────────────┘
-                     │ HTTPS · JSON · Cookie session
+                     │ HTTPS
 ┌────────────────────▼────────────────────────┐
-│  Application Tier (Laravel API)             │
-│  Apache / Nginx + PHP-FPM                   │
-└────────┬──────────────────────┬─────────────┘
-         │                      │
-┌────────▼─────────┐  ┌─────────▼─────────────┐
-│  MySQL 8         │  │  S3 Object Storage    │
-│  (relational)    │  │  (video, slides, PDF) │
-└──────────────────┘  └───────────────────────┘
+│  Cloudflare Edge (CDN · WAF · DDoS)         │
+└────────────────────┬────────────────────────┘
+                     │ HTTPS · mTLS to origin
+┌────────────────────▼────────────────────────┐
+│  AWS ap-southeast-5 (Malaysia, KL)          │
+│  ┌─────────────────────────────────────┐    │
+│  │  ALB → ECS Fargate (Laravel API)    │    │
+│  │  Multi-AZ · Auto-scale 2–10 tasks   │    │
+│  └────────┬────────────────────┬───────┘    │
+│           │                    │            │
+│  ┌────────▼────────┐  ┌────────▼─────────┐  │
+│  │  RDS MySQL 8    │  │  ElastiCache     │  │
+│  │  Multi-AZ + KMS │  │  Redis Multi-AZ  │  │
+│  └─────────────────┘  └──────────────────┘  │
+│  ┌─────────────────┐  ┌──────────────────┐  │
+│  │  S3 (uploads,   │  │  AWS Backup →    │  │
+│  │  video, slides) │  │  ap-southeast-1  │  │
+│  └─────────────────┘  └──────────────────┘  │
+└─────────────────────────────────────────────┘
 ```
 
 ## Repository layout
@@ -93,7 +124,8 @@ Planned (once scaffolding begins):
 ```
 .
 ├── backend/            # Laravel API
-└── frontend/           # React SPA
+├── frontend/           # React SPA
+└── infrastructure/     # Terraform IaC modules for AWS
 ```
 
 ## Documentation

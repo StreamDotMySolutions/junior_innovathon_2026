@@ -56,6 +56,33 @@ Data Tier
   └── S3 / Object Storage (video, slides, certificate PDFs)
 ```
 
+## AWS deployment
+
+Production runs on **AWS Asia Pacific (Malaysia) — `ap-southeast-5`** (KL) for data residency. Edge layer is **Cloudflare Business** in front of AWS for CDN, WAF, DDoS protection.
+
+| Layer | AWS service |
+|---|---|
+| Compute (Laravel API) | **ECS Fargate** Multi-AZ, auto-scale 2–10 tasks |
+| Load balancer | **Application Load Balancer (ALB)** |
+| Database | **RDS for MySQL 8** Multi-AZ, KMS encrypted, PITR |
+| Cache & queue | **ElastiCache for Redis** Multi-AZ |
+| Object storage | **S3** (uploads + SPA static + backup buckets) |
+| Backup | **AWS Backup** with cross-region replication to `ap-southeast-1` |
+| Secrets | **AWS Secrets Manager** + **Parameter Store** |
+| Security | **GuardDuty + Security Hub + KMS + ACM + CloudTrail + WAF** |
+| Observability | **CloudWatch Logs + Metrics + Alarms + X-Ray** |
+| Email | **SES** |
+| CI/CD | **GitHub Actions** → **ECR** → **ECS** (OIDC trust, no long-lived keys) |
+| IaC | **Terraform** modules in `infrastructure/` |
+| Edge | **Cloudflare** (CDN + WAF + DDoS) — Full (Strict) TLS to ALB |
+
+Full architecture details, network topology, security model, RTO/RPO targets, cost estimates (~USD 840–1,440/month), and Well-Architected pillar mapping are in `docs/proposal-drafts/aws-architecture.md`.
+
+**Hard constraints from tender that affect AWS choices:**
+- All data at rest must reside in Malaysia (§ 2.1.7) → all primary services in `ap-southeast-5`
+- Source code + all credentials transferred to RTM at end (§ 3.14) → AWS account should be RTM-owned, Stream.My operates via IAM Identity Center
+- Backups daily/weekly/monthly (§ 3.11.4(a)) → AWS Backup policy enforces this
+
 ## Scale
 
 - ~5,000 participants
