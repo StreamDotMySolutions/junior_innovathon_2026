@@ -1,0 +1,50 @@
+# Tender artifacts not for git
+SEBUTHARGA SISTEM PENJURIAN JUNIOR INNOVATHON.zip
+*.zip
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# IDEs / editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Backend (Laravel) — when scaffolded under backend/
+backend/vendor/
+backend/node_modules/
+backend/.env
+backend/.env.backup
+backend/.phpunit.result.cache
+backend/storage/*.key
+backend/storage/logs/*
+!backend/storage/logs/.gitkeep
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/testing/*
+backend/storage/framework/views/*
+backend/public/storage
+backend/public/hot
+backend/bootstrap/cache/*.php
+
+# Frontend (React/Vite) — when scaffolded under frontend/
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/coverage/
+frontend/.vite/
+
+# Generic
+node_modules/
+vendor/
+*.log
+.env
+.env.local
