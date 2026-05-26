@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp AI Chatbot — Junior Innovathon 2026</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: #d1d7db;
+      color: #111b21;
+      min-height: 100vh;
+    }
+    .wa-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.25rem;
+    }
+    .wa-context {
+      background: #fff;
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .wa-context .crumbs a { color: #008069; text-decoration: none; font-weight: 500; }
+    .wa-context .crumbs a:hover { text-decoration: underline; }
+
+    /* Main WA window */
+    .wa-window {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      background: #fff;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(11, 20, 26, 0.15);
+      min-height: 640px;
+    }
+    @media (max-width: 850px) {
+      .wa-window { grid-template-columns: 1fr; }
+      .wa-sidebar { display: none; }
+    }
+
+    /* Sidebar */
+    .wa-sidebar {
+      background: #fff;
+      border-right: 1px solid #e9edef;
+      display: flex;
+      flex-direction: column;
+    }
+    .wa-sidebar-header {
+      padding: 0.65rem 1rem;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .wa-sidebar-header .me {
+      display: flex; align-items: center; gap: 0.65rem;
+    }
+    .wa-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #00a884, #008069);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .wa-avatar.bot { background: linear-gradient(135deg, #0d3b66, #ffc107); color: #fff; }
+    .wa-icons-row { display: flex; gap: 1rem; color: #54656f; font-size: 1.1rem; }
+    .wa-search {
+      padding: 0.5rem 0.75rem;
+      background: #fff;
+      border-bottom: 1px solid #e9edef;
+    }
+    .wa-search input {
+      width: 100%;
+      border: 0;
+      background: #f0f2f5;
+      border-radius: 1.5rem;
+      padding: 0.5rem 1rem 0.5rem 2.5rem;
+      font-size: 0.85rem;
+      outline: none;
+      position: relative;
+    }
+    .wa-search-wrap { position: relative; }
+    .wa-search-wrap i {
+      position: absolute;
+      left: 1rem; top: 50%;
+      transform: translateY(-50%);
+      color: #54656f;
+      font-size: 0.95rem;
+    }
+    .wa-chat-list { overflow-y: auto; flex: 1; }
+    .wa-chat-item {
+      padding: 0.7rem 1rem;
+      display: flex;
+      gap: 0.75rem;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .wa-chat-item.active { background: #f0f2f5; }
+    .wa-chat-item:hover { background: #f5f6f6; }
+    .wa-chat-meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .wa-chat-meta .name-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.2rem;
+    }
+    .wa-chat-meta .name { font-weight: 500; font-size: 0.95rem; color: #111b21; }
+    .wa-chat-meta .time { font-size: 0.72rem; color: #667781; }
+    .wa-chat-meta .preview {
+      font-size: 0.82rem;
+      color: #667781;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .wa-chat-meta .preview .badge-unread {
+      background: #25d366; color: #fff;
+      border-radius: 1rem;
+      padding: 0 0.4rem;
+      font-size: 0.7rem;
+      float: right;
+      margin-left: 0.25rem;
+    }
+
+    /* Conversation */
+    .wa-conv {
+      display: flex;
+      flex-direction: column;
+      background: #efeae2;
+      position: relative;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%23d9d2c5' fill-opacity='0.35'%3E%3Ccircle cx='25' cy='25' r='1.5'/%3E%3Ccircle cx='75' cy='75' r='1.5'/%3E%3Ccircle cx='50' cy='10' r='1'/%3E%3Ccircle cx='10' cy='60' r='1'/%3E%3Ccircle cx='90' cy='40' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .wa-conv-header {
+      background: #00a884;
+      color: #fff;
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .wa-conv-header .info { flex: 1; }
+    .wa-conv-header .name { font-weight: 600; font-size: 1rem; }
+    .wa-conv-header .status { font-size: 0.78rem; opacity: 0.85; }
+    .wa-conv-header .badge-ai {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .wa-conv-header .icons { display: flex; gap: 1.25rem; font-size: 1.1rem; }
+
+    .wa-messages {
+      flex: 1;
+      padding: 1.5rem 4%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .wa-date-divider {
+      align-self: center;
+      background: rgba(225, 245, 254, 0.92);
+      color: #54656f;
+      font-size: 0.72rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 0.5rem;
+      margin: 0.5rem 0 1rem;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.06);
+    }
+
+    .wa-bubble {
+      max-width: 65%;
+      padding: 0.5rem 0.7rem 0.4rem;
+      border-radius: 0.55rem;
+      position: relative;
+      box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+      font-size: 0.925rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+      margin-bottom: 0.15rem;
+    }
+    .wa-bubble .meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      font-size: 0.68rem;
+      color: #667781;
+      float: right;
+      margin-left: 0.5rem;
+      margin-top: 0.25rem;
+      padding-left: 0.4rem;
+    }
+    .wa-bubble.bot {
+      align-self: flex-start;
+      background: #fff;
+      border-top-left-radius: 0;
+    }
+    .wa-bubble.me {
+      align-self: flex-end;
+      background: #d9fdd3;
+      border-top-right-radius: 0;
+    }
+    .wa-bubble.bot::before, .wa-bubble.me::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 0; height: 0;
+      border-style: solid;
+    }
+    .wa-bubble.bot::before {
+      left: -8px;
+      border-width: 0 8px 8px 0;
+      border-color: transparent #fff transparent transparent;
+    }
+    .wa-bubble.me::before {
+      right: -8px;
+      border-width: 0 0 8px 8px;
+      border-color: transparent transparent transparent #d9fdd3;
+    }
+    .wa-bubble.bot .meta i.tick { display: none; }
+    .wa-bubble.me .meta i.tick { color: #53bdeb; font-size: 0.9rem; }
+
+    .wa-bubble strong { color: #008069; }
+    .wa-bubble code {
+      background: rgba(0, 105, 78, 0.08);
+      padding: 0.05rem 0.3rem;
+      border-radius: 0.25rem;
+      font-size: 0.85em;
+      color: #008069;
+    }
+    .wa-bubble a {
+      color: #027eb5;
+      text-decoration: underline;
+      word-break: break-all;
+    }
+    .wa-bubble ul { margin: 0.35rem 0 0.25rem 1.1rem; padding: 0; }
+    .wa-bubble ul li { margin: 0.05rem 0; }
+
+    .wa-typing {
+      align-self: flex-start;
+      background: #fff;
+      padding: 0.65rem 0.9rem;
+      border-radius: 0.55rem;
+      box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+      display: inline-flex;
+      gap: 0.25rem;
+      align-items: center;
+    }
+    .wa-typing span {
+      width: 6px; height: 6px;
+      background: #8696a0;
+      border-radius: 50%;
+      animation: dot 1.4s infinite;
+    }
+    .wa-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .wa-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dot {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-3px); opacity: 1; }
+    }
+
+    .wa-ticket-card {
+      background: linear-gradient(135deg, #fff8e1, #fff3c2);
+      border-left: 3px solid #ffc107;
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.4rem;
+      margin: 0.4rem 0;
+      font-size: 0.85rem;
+    }
+    .wa-ticket-card .lbl {
+      font-size: 0.72rem;
+      color: #5d4e00;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    /* Input bar */
+    .wa-input {
+      background: #f0f2f5;
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-top: 1px solid #e9edef;
+    }
+    .wa-input i { color: #54656f; font-size: 1.3rem; cursor: pointer; }
+    .wa-input .field {
+      flex: 1;
+      background: #fff;
+      border-radius: 1.5rem;
+      padding: 0.55rem 1rem;
+      color: #54656f;
+      font-size: 0.9rem;
+    }
+
+    /* Backend annotation */
+    .annotation {
+      background: linear-gradient(135deg, #0d3b66, #062c52);
+      color: #fff;
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+      margin-top: 1rem;
+    }
+    .annotation h6 { color: #ffc107; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+    .annotation .pipeline {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .annotation .step {
+      background: rgba(255,255,255,0.1);
+      padding: 0.3rem 0.65rem;
+      border-radius: 0.4rem;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .annotation .arrow { color: #ffc107; }
+    .annotation .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .annotation .meta-grid div {
+      background: rgba(255,255,255,0.06);
+      padding: 0.5rem;
+      border-radius: 0.4rem;
+      font-size: 0.78rem;
+    }
+    .annotation .meta-grid strong { color: #ffc107; display: block; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+
+<div class="wa-wrap">
+
+  <!-- Breadcrumb -->
+  <div class="wa-context">
+    <div class="crumbs">
+      <a href="../index.html"><i class="bi bi-arrow-left"></i> Kembali ke Mockup Index</a>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge text-bg-success">Live UX Mockup</span>
+      <span class="badge text-bg-light text-dark">Memenuhi § 3.4 (AI Chatbot)</span>
+    </div>
+  </div>
+
+  <!-- Main WhatsApp Web window -->
+  <div class="wa-window">
+
+    <!-- Sidebar -->
+    <aside class="wa-sidebar">
+      <div class="wa-sidebar-header">
+        <div class="me">
+          <div class="wa-avatar" style="background: #54656f;">CA</div>
+          <div>
+            <div style="font-weight: 600; font-size: 0.9rem;">Cikgu Aishah</div>
+            <div style="font-size: 0.72rem; color: #667781;">+60 12-345 6789</div>
+          </div>
+        </div>
+        <div class="wa-icons-row">
+          <i class="bi bi-three-dots-vertical"></i>
+        </div>
+      </div>
+      <div class="wa-search">
+        <div class="wa-search-wrap">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Cari atau mulakan chat baharu" />
+        </div>
+      </div>
+      <div class="wa-chat-list">
+        <div class="wa-chat-item active">
+          <div class="wa-avatar bot">JI</div>
+          <div class="wa-chat-meta">
+            <div class="name-row">
+              <span class="name">Junior Innovathon 2026 Bot</span>
+              <span class="time">09:27</span>
+            </div>
+            <div class="preview"><i class="bi bi-check2-all" style="color:#53bdeb;"></i> Tiket #TX-2026-1847 telah dicipta... <span class="badge-unread">2</span></div>
+          </div>
+        </div>
+        <div class="wa-chat-item">
+          <div class="wa-avatar" style="background:#0d3b66;">RT</div>
+          <div class="wa-chat-meta">
+            <div class="name-row">
+              <span class="name">RTM Helpdesk Team</span>
+              <span class="time">Semalam</span>
+            </div>
+            <div class="preview"><i class="bi bi-check2-all" style="color:#8696a0;"></i> Terima kasih atas pertanyaan Cikgu...</div>
+          </div>
+        </div>
+        <div class="wa-chat-item">
+          <div class="wa-avatar" style="background:#ff6b35;">GS</div>
+          <div class="wa-chat-meta">
+            <div class="name-row">
+              <span class="name">Grup Sekolah JI 2026</span>
+              <span class="time">11/06</span>
+            </div>
+            <div class="preview"><i class="bi bi-check2-all" style="color:#8696a0;"></i> Cikgu Lim: Bila keputusan zon...</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Conversation -->
+    <section class="wa-conv">
+      <div class="wa-conv-header">
+        <div class="wa-avatar bot">JI</div>
+        <div class="info">
+          <div class="name">Junior Innovathon 2026 Bot</div>
+          <div class="status">Atas talian · Biasanya balas dalam beberapa saat</div>
+        </div>
+        <span class="badge-ai">⚡ AI · GPT-4o-mini</span>
+        <div class="icons">
+          <i class="bi bi-camera-video"></i>
+          <i class="bi bi-telephone"></i>
+          <i class="bi bi-three-dots-vertical"></i>
+        </div>
+      </div>
+
+      <div class="wa-messages">
+
+        <div class="wa-date-divider">HARI INI</div>
+
+        <!-- Turn 1: User greeting -->
+        <div class="wa-bubble me">
+          Salam Cikgu, saya guru SMK Seksyen 11 Shah Alam. Saya nak daftar pasukan untuk Junior Innovathon 2026. Macam mana caranya?
+          <span class="meta">09:23 <i class="bi bi-check2-all tick"></i></span>
+        </div>
+
+        <!-- Turn 2: Bot reply -->
+        <div class="wa-bubble bot">
+          Wa'alaikumussalam Cikgu! 👋 Selamat datang ke Junior Innovathon 2026.<br><br>
+          Langkah pendaftaran sangat mudah:<br>
+          <ul>
+            <li>Pergi ke portal: <strong>juniorinnovathon.rtm.gov.my</strong></li>
+            <li>Klik <strong>"Daftar Pasukan"</strong> di header</li>
+            <li>Log masuk guna akaun Cikgu (atau buat baharu)</li>
+            <li>Ikut wizard 5-langkah: Sekolah → Pasukan → Peserta → Bahan → Semakan</li>
+          </ul>
+          Sekolah Cikgu sudah ada dalam Pangkalan Data — auto-cari akan dapat secara cepat. ✨
+          <span class="meta">09:23</span>
+        </div>
+
+        <!-- Turn 3: User asks deadline -->
+        <div class="wa-bubble me">
+          Baik. Bila tarikh tutup pendaftaran?
+          <span class="meta">09:24 <i class="bi bi-check2-all tick"></i></span>
+        </div>
+
+        <!-- Turn 4: Bot replies -->
+        <div class="wa-bubble bot">
+          Tarikh tutup pendaftaran: <strong>15 Ogos 2026 (Jumaat)</strong>, 11.59 mlm.<br><br>
+          Itu kira-kira <strong>42 hari lagi</strong> dari hari ini. Saya cadangkan Cikgu siapkan video penyertaan lebih awal kerana muat naik video 3-minit boleh ambil masa.
+          <span class="meta">09:24</span>
+        </div>
+
+        <!-- Turn 5: User context follow-up -->
+        <div class="wa-bubble me">
+          Berapa orang pelajar dalam satu pasukan? Adakah saya kena ikut sertai dalam pasukan?
+          <span class="meta">09:25 <i class="bi bi-check2-all tick"></i></span>
+        </div>
+
+        <!-- Turn 6: Bot replies -->
+        <div class="wa-bubble bot">
+          Setiap pasukan terdiri daripada:
+          <ul>
+            <li><strong>2 hingga 4 pelajar</strong> (sekolah rendah ATAU menengah, bukan campur)</li>
+            <li><strong>1 guru pengiring</strong> (itulah Cikgu! 🙂)</li>
+          </ul>
+          Cikgu akan didaftarkan sebagai <strong>guru penyelaras</strong> — tidak menyertai pertandingan secara langsung, tetapi memberi bimbingan dan menguruskan submission pasukan.<br><br>
+          Cikgu boleh daftar <em>lebih daripada satu pasukan</em> dari sekolah yang sama jika berminat.
+          <span class="meta">09:25</span>
+        </div>
+
+        <!-- Turn 7: User asks about prize -->
+        <div class="wa-bubble me">
+          Wah, menarik! Hadiah apa untuk pemenang?
+          <span class="meta">09:26 <i class="bi bi-check2-all tick"></i></span>
+        </div>
+
+        <!-- Turn 8: Bot replies with prize details -->
+        <div class="wa-bubble bot">
+          Hadiah Junior Innovathon 2026 sangat lumayan: 🏆<br>
+          <ul>
+            <li><strong>Johan:</strong> RM 20,000 tunai + biasiswa pendidikan</li>
+            <li><strong>Naib Johan:</strong> RM 10,000 + biasiswa</li>
+            <li><strong>Tempat ke-3:</strong> RM 5,000 + biasiswa</li>
+            <li><strong>Anugerah Khas Kategori:</strong> RM 2,000 setiap satu (5 kategori)</li>
+          </ul>
+          Selain hadiah wang tunai, <strong>SEMUA finalists</strong> akan:<br>
+          ✅ Tampil di siaran TV RTM (6 episod)<br>
+          ✅ Dapat sijil pengiktirafan rasmi<br>
+          ✅ Akses bimbingan industri (mentor)<br><br>
+          <em>Maklumat tertakluk kepada pengesahan rasmi RTM.</em>
+          <span class="meta">09:26</span>
+        </div>
+
+        <!-- Turn 9: User reports issue -->
+        <div class="wa-bubble me">
+          Saya cuba muat naik video tadi tetapi keluar error "Connection timeout" selepas 5 minit. Macam mana?
+          <span class="meta">09:27 <i class="bi bi-check2-all tick"></i></span>
+        </div>
+
+        <!-- Typing indicator -->
+        <div class="wa-typing" title="Bot sedang memproses...">
+          <span></span><span></span><span></span>
+        </div>
+
+        <!-- Turn 10: Bot escalates -->
+        <div class="wa-bubble bot">
+          Maaf atas kesulitan, Cikgu. Isu ini perlu disemak oleh pasukan teknikal kami. Saya telah mencipta tiket helpdesk dengan butiran masalah Cikgu:
+          <div class="wa-ticket-card">
+            <div class="lbl">Tiket Helpdesk</div>
+            <strong>#TX-2026-1847</strong><br>
+            Kategori: <strong>Sederhana</strong> · Sistem upload video<br>
+            ETA respons: <strong>3 jam</strong> (SLA § 3.11.3)<br>
+            Operator: <strong>Wan Faridah (RTM Tech Support)</strong>
+          </div>
+          Wan Faridah akan menghubungi Cikgu melalui WhatsApp atau e-mel dalam masa 3 jam. Sementara menunggu, sila cuba:
+          <ul>
+            <li>Periksa kekuatan internet (minimum 5 Mbps upload)</li>
+            <li>Pastikan saiz video bawah 500 MB</li>
+            <li>Gunakan pelayar Chrome / Edge terkini</li>
+          </ul>
+          <span class="meta">09:27</span>
+        </div>
+
+        <!-- Turn 11: User acknowledges -->
+        <div class="wa-bubble me">
+          Terima kasih banyak! Sangat membantu.
+          <span class="meta">09:27 <i class="bi bi-check2-all tick"></i></span>
+        </div>
+
+        <!-- Turn 12: Bot closing -->
+        <div class="wa-bubble bot">
+          Sama-sama Cikgu Aishah! 🌟 Saya di sini 24/7 jika ada apa-apa pertanyaan lagi. Semoga pasukan SMK Seksyen 11 berjaya di Junior Innovathon 2026! 🚀
+          <span class="meta">09:27</span>
+        </div>
+
+      </div>
+
+      <!-- Input bar -->
+      <div class="wa-input">
+        <i class="bi bi-emoji-smile"></i>
+        <i class="bi bi-paperclip"></i>
+        <div class="field">Taip mesej...</div>
+        <i class="bi bi-mic"></i>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Backend annotation -->
+  <div class="annotation">
+    <h6>⚙️ Apa yang berlaku di belakang setiap balasan bot</h6>
+    <div class="pipeline">
+      <span class="step">WhatsApp Cloud API webhook</span>
+      <span class="arrow">→</span>
+      <span class="step">Laravel API (signature-verified)</span>
+      <span class="arrow">→</span>
+      <span class="step">RAG retrieval dari KB (MySQL + embeddings)</span>
+      <span class="arrow">→</span>
+      <span class="step">OpenAI GPT-4o-mini</span>
+      <span class="arrow">→</span>
+      <span class="step">Hantar balas via WA API</span>
+    </div>
+    <div class="meta-grid">
+      <div><strong>~ 2.3s</strong> Purata respons end-to-end</div>
+      <div><strong>92.3%</strong> Soalan diselesaikan oleh AI (tanpa eskalasi)</div>
+      <div><strong>BM + EN</strong> Pengesanan bahasa automatik</div>
+      <div><strong>24/7</strong> Tiada masa rehat</div>
+      <div><strong>PII filter</strong> No. KP, alamat ditapis sebelum hantar ke OpenAI</div>
+      <div><strong>Audit log</strong> Setiap mesej direkod (§ 2.1.7)</div>
+    </div>
+    <div class="mt-3 small" style="opacity: 0.7;">
+      Mockup oleh Stream.My · StreamDotMy CMS · Junior Innovathon 2026 · Memenuhi spec § 3.4
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
