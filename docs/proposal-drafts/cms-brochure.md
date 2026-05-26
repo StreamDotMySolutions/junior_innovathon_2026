@@ -1,4 +1,4 @@
-# InnovaCast by Stream.My
+# StreamDotMy CMS
 
 ### A complete broadcast-grade competition platform — built in Malaysia, for Malaysian government broadcasters.
 
@@ -8,11 +8,11 @@
 
 ---
 
-## Tentang InnovaCast
+## Tentang StreamDotMy CMS
 
-**InnovaCast** adalah platform pengurusan kandungan (CMS) bersepadu yang direka khas untuk **program realiti pertandingan inovasi** — menggabungkan pendaftaran penyertaan, penjurian zon, penjurian studio, penerbitan kandungan, dan **streaming langsung** dalam satu sistem yang kohesif. Berbeza daripada CMS generik yang perlu disambung dengan pelbagai third-party tools, InnovaCast menyepadukan setiap komponen yang diperlukan oleh penerbit penyiaran ke dalam satu codebase tunggal.
+**StreamDotMy CMS** adalah platform pengurusan kandungan (CMS) bersepadu yang direka khas untuk **program realiti pertandingan inovasi** — menggabungkan pendaftaran penyertaan, penjurian zon, penjurian studio, penerbitan kandungan, dan **streaming langsung** dalam satu sistem yang kohesif. Berbeza daripada CMS generik yang perlu disambung dengan pelbagai third-party tools, StreamDotMy CMS menyepadukan setiap komponen yang diperlukan oleh penerbit penyiaran ke dalam satu codebase tunggal.
 
-Direka, dibangunkan, dan diselenggara oleh **Stream.My** di Malaysia, InnovaCast dibangunkan dengan kefahaman mendalam tentang keperluan operasi penyiaran kerajaan: data residency, audit trail, integrasi multi-saluran, dan SLA tahap perkhidmatan kerajaan. Sumber kod **100% dimiliki oleh pelanggan** selepas kontrak — tiada kunci vendor (vendor lock-in), tiada bayaran lesen tahunan tersembunyi.
+Direka, dibangunkan, dan diselenggara oleh **Stream.My** di Malaysia, StreamDotMy CMS dibangunkan dengan kefahaman mendalam tentang keperluan operasi penyiaran kerajaan: data residency, audit trail, integrasi multi-saluran, dan SLA tahap perkhidmatan kerajaan. Sumber kod **100% dimiliki oleh pelanggan** selepas kontrak — tiada kunci vendor (vendor lock-in), tiada bayaran lesen tahunan tersembunyi.
 
 ---
 
@@ -20,7 +20,7 @@ Direka, dibangunkan, dan diselenggara oleh **Stream.My** di Malaysia, InnovaCast
 
 ### 1. Streaming Server Bersepadu — Langsung + VOD
 
-InnovaCast dilengkapi **pelayan RTMP terbina sendiri** di atas Amazon EC2, dengan keupayaan transkod **HLS multi-bitrate** automatik. Sesuai untuk:
+StreamDotMy CMS dilengkapi **pelayan RTMP terbina sendiri** di atas Amazon EC2, dengan keupayaan transkod **HLS multi-bitrate** automatik. Sesuai untuk:
 
 - **Siaran langsung studio** — terima RTMP push daripada encoder studio (OBS, Wirecast, atau perkakasan), keluarkan stream HLS pelbagai resolusi (1080p, 720p, 480p, 360p) yang adaptif kepada bandwidth penonton.
 - **Video-on-Demand (VOD)** — video penyertaan peserta dimuat naik ke S3 dan ditranskod secara automatik untuk playback pantas oleh juri pada mana-mana peranti.
@@ -62,7 +62,7 @@ Setiap halaman diuji pada tiga saiz skrin sebelum dilepaskan. Tiada aplikasi mud
 
 ### 5. Penjurian Real-Time dengan Integrasi LED
 
-Modul penjurian InnovaCast direka khas untuk **rakaman studio langsung**:
+Modul penjurian StreamDotMy CMS direka khas untuk **rakaman studio langsung**:
 
 - Juri memasukkan markah pada tablet/telefon mereka mengikut rubrik tetap
 - Markah dihantar ke API dalam masa < 500 ms
@@ -111,7 +111,7 @@ Dipertingkat oleh **OpenAI GPT-4o-mini** dengan **RAG (Retrieval-Augmented Gener
 
 ## Senibina Pelayan Streaming
 
-Streaming server InnovaCast direka untuk dijalankan dalam infrastruktur AWS pelanggan, dalam VPC yang sama dengan API utama. Tiada perkhidmatan streaming pihak ketiga.
+Streaming server StreamDotMy CMS direka untuk dijalankan dalam infrastruktur AWS pelanggan, dalam VPC yang sama dengan API utama. Tiada perkhidmatan streaming pihak ketiga.
 
 ```mermaid
 flowchart LR
@@ -257,7 +257,7 @@ Kebenaran berasaskan **Spatie Laravel Permission** — boleh dikemas kini oleh S
 
 ## Statistik & Analitik
 
-InnovaCast menyediakan **dashboard tiga lapisan**:
+StreamDotMy CMS menyediakan **dashboard tiga lapisan**:
 
 **Lapisan 1 — Statistik Program** (untuk Penerbit RTM)
 - Jumlah pendaftaran (real-time)
@@ -286,7 +286,7 @@ Semua data boleh dieksport sebagai **Excel** atau **CSV**. Visualisasi menggunak
 
 ## Backup & Pemulihan
 
-InnovaCast mengikuti prinsip **3-2-1**: 3 salinan data, 2 jenis storan berbeza, 1 salinan offsite.
+StreamDotMy CMS mengikuti prinsip **3-2-1**: 3 salinan data, 2 jenis storan berbeza, 1 salinan offsite.
 
 **Pelan backup automatik:**
 
@@ -314,7 +314,7 @@ Setiap suku tahun, satu set backup dipulihkan ke environment ujian untuk memasti
 
 ## Keselamatan
 
-InnovaCast dibangunkan dengan prinsip **"secure-by-default"** mengikuti **AWS Well-Architected Framework (Security Pillar)** dan **OWASP Top 10**.
+StreamDotMy CMS dibangunkan dengan prinsip **"secure-by-default"** mengikuti **AWS Well-Architected Framework (Security Pillar)** dan **OWASP Top 10**.
 
 **Enkripsi:**
 
@@ -355,9 +355,9 @@ InnovaCast dibangunkan dengan prinsip **"secure-by-default"** mengikuti **AWS We
 
 **§ 3.2.1 Spesifikasi** secara eksplisit menyatakan: *"CMS dibangunkan secara: a) Product tempatan / menggunakan local developer."*
 
-InnovaCast memenuhi keperluan ini secara mutlak:
+StreamDotMy CMS memenuhi keperluan ini secara mutlak:
 
-| Aspek | InnovaCast | CMS Off-the-Shelf (Wordpress, Drupal) |
+| Aspek | StreamDotMy CMS | CMS Off-the-Shelf (Wordpress, Drupal) |
 |---|---|---|
 | Pembangun | Stream.My (Malaysia) | Komuniti global / Vendor luar negara |
 | Source code | Penuh diserah ke RTM | Open-source tapi tidak diubah-suai oleh vendor |
@@ -436,4 +436,4 @@ Pembangun perisian dan integrator sistem yang berpangkalan di Malaysia, berkhidm
 
 ---
 
-*InnovaCast™ adalah produk Stream.My Sdn. Bhd. Direka, dibangunkan, dan diselenggara di Malaysia.*
+*StreamDotMy CMS™ adalah produk Stream.My Sdn. Bhd. Direka, dibangunkan, dan diselenggara di Malaysia.*
