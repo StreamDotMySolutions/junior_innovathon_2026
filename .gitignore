@@ -1,6 +1,9 @@
 # Tender artifacts not for git
 SEBUTHARGA SISTEM PENJURIAN JUNIOR INNOVATHON.zip
 *.zip
+# But allow packaged proposal artifacts:
+!docs/proposal-drafts/**/*.zip
+!docs/proposal-drafts/*.zip
 
 # OS
 Thumbs.db
