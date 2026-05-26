@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — StreamDotMy CMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+  <nav class="app-nav sticky-top">
+    <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+      <a class="brand" href="01-dashboard.html">
+        <span class="brand-icon"><i class="bi bi-stars"></i></span>
+        StreamDotMy CMS · Admin
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-light"><i class="bi bi-search"></i></button>
+        <button class="btn btn-sm btn-light position-relative">
+          <i class="bi bi-bell"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">12</span>
+        </button>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="bi bi-shield-check me-1"></i> SuperAdmin
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row g-0">
+
+      <!-- Sidebar -->
+      <aside class="col-md-3 col-lg-2 app-sidebar">
+        <div class="sidebar-section">Utama</div>
+        <a class="sidebar-link active" href="01-dashboard.html"><i class="bi bi-speedometer2"></i>Dashboard</a>
+        <a class="sidebar-link" href="02-submissions.html"><i class="bi bi-collection"></i>Penyertaan</a>
+        <a class="sidebar-link" href="#"><i class="bi bi-people"></i>Pengguna</a>
+        <a class="sidebar-link" href="#"><i class="bi bi-clipboard-check"></i>Penjurian</a>
+
+        <div class="sidebar-section">Kandungan</div>
+        <a class="sidebar-link" href="03-cms.html"><i class="bi bi-pencil"></i>CMS Halaman</a>
+        <a class="sidebar-link" href="#"><i class="bi bi-camera-reels"></i>Episod Studio</a>
+        <a class="sidebar-link" href="#"><i class="bi bi-image"></i>Media Library</a>
+
+        <div class="sidebar-section">Laporan</div>
+        <a class="sidebar-link" href="04-analytics.html"><i class="bi bi-bar-chart-line"></i>Analitik</a>
+        <a class="sidebar-link" href="#"><i class="bi bi-file-earmark-spreadsheet"></i>Eksport</a>
+
+        <div class="sidebar-section">Sokongan</div>
+        <a class="sidebar-link" href="#"><i class="bi bi-life-preserver"></i>Helpdesk</a>
+        <a class="sidebar-link" href="#"><i class="bi bi-chat-square-text"></i>AI Chatbot</a>
+        <a class="sidebar-link" href="#"><i class="bi bi-gear"></i>Tetapan</a>
+      </aside>
+
+      <!-- Main -->
+      <main class="col-md-9 col-lg-10 app-main">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+          <div>
+            <h3 class="mb-0">Dashboard</h3>
+            <small class="text-muted">Selamat datang kembali · Kemas kini real-time</small>
+          </div>
+          <div class="d-flex gap-2">
+            <select class="form-select form-select-sm" style="width: auto;">
+              <option>7 hari terakhir</option>
+              <option>30 hari terakhir</option>
+              <option>Sepanjang program</option>
+            </select>
+            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-download me-1"></i>Eksport Laporan</button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-3">
+            <div class="card card-stat">
+              <div class="stat-label"><i class="bi bi-people me-1"></i>Jumlah Pasukan</div>
+              <div class="stat-value">2,847</div>
+              <div class="stat-trend"><i class="bi bi-arrow-up"></i> +18% minggu ini</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card card-stat">
+              <div class="stat-label"><i class="bi bi-mortarboard me-1"></i>Sekolah Aktif</div>
+              <div class="stat-value">894</div>
+              <div class="stat-trend"><i class="bi bi-arrow-up"></i> +52 minggu ini</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card card-stat">
+              <div class="stat-label"><i class="bi bi-camera-video me-1"></i>Video Dimuat Naik</div>
+              <div class="stat-value">2,134</div>
+              <div class="stat-trend"><i class="bi bi-arrow-up"></i> 75% kadar siap</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card card-stat">
+              <div class="stat-label"><i class="bi bi-clipboard-check me-1"></i>Markah Dihantar</div>
+              <div class="stat-value" style="color: var(--color-accent-warm);">487</div>
+              <div class="stat-trend text-muted">Saringan zon dalam proses</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts row -->
+        <div class="row g-3 mb-4">
+          <div class="col-lg-8">
+            <div class="card p-3">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">Trend Pendaftaran (30 Hari)</h6>
+                <span class="small text-muted">Puncak: 12 Jun (147 pasukan)</span>
+              </div>
+              <canvas id="trendChart" height="80"></canvas>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card p-3">
+              <h6 class="mb-3">Pecahan Mengikut Negeri</h6>
+              <canvas id="stateChart" height="160"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent activity + Episodes -->
+        <div class="row g-3">
+          <div class="col-lg-7">
+            <div class="card">
+              <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Aktiviti Terkini</h6>
+                <a href="#" class="small">Lihat semua</a>
+              </div>
+              <div class="card-body">
+                <div class="activity-item">
+                  <div class="activity-icon"><i class="bi bi-pencil-square"></i></div>
+                  <div class="flex-grow-1">
+                    <div><strong>Cikgu Aishah</strong> menghantar pasukan <strong>EcoBot Solutions</strong></div>
+                    <div class="activity-time">SMK Seksyen 11 Shah Alam · 5 minit lalu</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon"><i class="bi bi-clipboard-check"></i></div>
+                  <div class="flex-grow-1">
+                    <div><strong>Dr. Faisal Ramli</strong> selesai menilai 8 pasukan zon Tengah</div>
+                    <div class="activity-time">Juri Zon Tengah · 23 minit lalu</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon"><i class="bi bi-camera-video"></i></div>
+                  <div class="flex-grow-1">
+                    <div><strong>SmartClass AI</strong> berjaya muat naik video (4:23 MB)</div>
+                    <div class="activity-time">SMK Bukit Jalil · 1 jam lalu</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon"><i class="bi bi-life-preserver" style="color: var(--color-warning);"></i></div>
+                  <div class="flex-grow-1">
+                    <div>Tiket helpdesk baru: <strong>"Tidak boleh muat naik video besar"</strong></div>
+                    <div class="activity-time">JI26-KL-042 · 2 jam lalu · <span class="badge bg-warning text-primary-dark">Sederhana</span></div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon"><i class="bi bi-chat-dots" style="color: var(--color-accent-warm);"></i></div>
+                  <div class="flex-grow-1">
+                    <div>AI Chatbot eskalasi tiket: <strong>"Bilakah keputusan saringan?"</strong></div>
+                    <div class="activity-time">via WhatsApp · 3 jam lalu</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5">
+            <div class="card">
+              <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-camera-reels me-2 text-primary"></i>Episod Akan Datang</h6>
+                <a href="#" class="small">Urus episod</a>
+              </div>
+              <div class="card-body">
+                <div class="d-flex gap-3 mb-3 pb-3 border-bottom">
+                  <div class="text-center" style="min-width: 70px;">
+                    <div class="text-muted small">Sep</div>
+                    <div class="display-6 fw-bold text-primary">12</div>
+                  </div>
+                  <div>
+                    <h6 class="mb-1">Episod 1 — Audisi Hidup</h6>
+                    <div class="small text-muted">8.30 mlm · Studio A RTM · 30 pasukan</div>
+                    <span class="badge-status badge-scheduled mt-1">Akan Datang</span>
+                  </div>
+                </div>
+                <div class="d-flex gap-3 mb-3 pb-3 border-bottom">
+                  <div class="text-center" style="min-width: 70px;">
+                    <div class="text-muted small">Sep</div>
+                    <div class="display-6 fw-bold text-primary">26</div>
+                  </div>
+                  <div>
+                    <h6 class="mb-1">Episod 2 — Babak Inovasi</h6>
+                    <div class="small text-muted">8.30 mlm · Studio A RTM · 24 pasukan</div>
+                    <span class="badge-status badge-scheduled mt-1">Akan Datang</span>
+                  </div>
+                </div>
+                <div class="d-flex gap-3">
+                  <div class="text-center" style="min-width: 70px;">
+                    <div class="text-muted small">Okt</div>
+                    <div class="display-6 fw-bold text-primary">10</div>
+                  </div>
+                  <div>
+                    <h6 class="mb-1">Episod 3 — Cabaran Realiti</h6>
+                    <div class="small text-muted">8.30 mlm · Studio A RTM · 18 pasukan</div>
+                    <span class="badge-status badge-scheduled mt-1">Akan Datang</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    new Chart(document.getElementById('trendChart'), {
+      type: 'line',
+      data: {
+        labels: ['28 Mei','1 Jun','5 Jun','9 Jun','13 Jun','17 Jun','21 Jun','25 Jun','29 Jun'],
+        datasets: [{
+          label: 'Pendaftaran',
+          data: [12, 48, 89, 124, 147, 132, 118, 95, 78],
+          borderColor: '#0d3b66',
+          backgroundColor: 'rgba(13,59,102,0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+
+    new Chart(document.getElementById('stateChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Selangor', 'KL', 'Johor', 'Penang', 'Sabah', 'Lain'],
+        datasets: [{
+          data: [612, 387, 298, 245, 187, 1118],
+          backgroundColor: ['#0d3b66', '#1e5a99', '#ffc107', '#ff6b35', '#198754', '#e5e7eb']
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+    });
+  </script>
+</body>
+</html>

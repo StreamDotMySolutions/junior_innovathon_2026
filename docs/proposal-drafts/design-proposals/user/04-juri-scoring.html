@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Penjurian — Junior Innovathon 2026</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <style>
+    .video-placeholder {
+      background: linear-gradient(135deg, #0d3b66, #062c52);
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      position: relative;
+    }
+    .video-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255,193,7,0.15), transparent 70%);
+      border-radius: inherit;
+    }
+    .video-play-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .video-play-btn:hover { transform: scale(1.1); }
+    .video-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+    }
+    .progress-bar-video {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-bar-video > div { height: 100%; width: 35%; background: var(--color-accent); }
+    .criterion-row { padding: 0.75rem 0; border-bottom: 1px solid var(--color-border); }
+    .criterion-row:last-child { border: 0; }
+    .score-bubble {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+    }
+    .slide-thumb {
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #1e5a99, #0d3b66);
+      border-radius: 0.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .slide-thumb.active { border-color: var(--color-accent); }
+  </style>
+</head>
+<body>
+
+  <nav class="app-nav sticky-top">
+    <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+      <a class="brand" href="01-landing.html">
+        <span class="brand-icon"><i class="bi bi-stars"></i></span>
+        Junior Innovathon 2026 · Penjurian
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-warning text-primary-dark fw-semibold">Zon Tengah · Saringan</span>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle me-1"></i> Dr. Faisal Ramli
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid py-3 px-4">
+
+    <!-- Breadcrumb + progress -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center gap-2 small text-muted">
+        <a href="#" class="text-muted text-decoration-none">Senarai Pasukan</a>
+        <i class="bi bi-chevron-right"></i>
+        <span class="text-primary">EcoBot Solutions (JI26-S11-001)</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <span class="small text-muted">Penilaian saya: <strong>8 / 25</strong></span>
+        <div class="progress" style="width: 200px; height: 8px;">
+          <div class="progress-bar bg-warning" style="width: 32%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3">
+
+      <!-- Left: Video + slides -->
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body p-3">
+            <!-- Video -->
+            <div class="video-placeholder ratio ratio-16x9 mb-3">
+              <div class="d-flex align-items-center justify-content-center position-relative">
+                <div class="video-play-btn"><i class="bi bi-play-fill"></i></div>
+              </div>
+              <div class="video-controls">
+                <i class="bi bi-pause-fill"></i>
+                <div class="progress-bar-video"><div></div></div>
+                <span>01:03 / 03:00</span>
+                <i class="bi bi-volume-up"></i>
+                <i class="bi bi-fullscreen"></i>
+              </div>
+            </div>
+
+            <!-- Slide carousel -->
+            <h6 class="mb-2"><i class="bi bi-images me-2"></i>5 Slaid Persembahan</h6>
+            <div class="row g-2">
+              <div class="col"><div class="slide-thumb active">Slaid 1<br><small>Pengenalan</small></div></div>
+              <div class="col"><div class="slide-thumb">Slaid 2<br><small>Masalah</small></div></div>
+              <div class="col"><div class="slide-thumb">Slaid 3<br><small>Solusi</small></div></div>
+              <div class="col"><div class="slide-thumb">Slaid 4<br><small>Demo</small></div></div>
+              <div class="col"><div class="slide-thumb">Slaid 5<br><small>Impak</small></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scoring rubric -->
+        <div class="card mt-3">
+          <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-clipboard-check me-2 text-primary"></i>Borang Pemarkahan</h5>
+            <span class="small text-muted"><i class="bi bi-cloud-check text-success me-1"></i>Disimpan automatik</span>
+          </div>
+          <div class="card-body">
+
+            <div class="criterion-row">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div>
+                  <strong>1. Inovasi &amp; Originaliti</strong>
+                  <div class="small text-muted">Sejauh mana idea adalah baru, kreatif, dan menyelesaikan masalah yang tidak diselesaikan sebelum ini. <em>(Wajaran 30%)</em></div>
+                </div>
+                <span class="score-bubble">22</span>
+              </div>
+              <input type="range" class="form-range" min="0" max="30" value="22">
+              <div class="d-flex justify-content-between small text-muted"><span>0</span><span>30 maks</span></div>
+            </div>
+
+            <div class="criterion-row">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div>
+                  <strong>2. Pelaksanaan Teknikal</strong>
+                  <div class="small text-muted">Demonstrasi prototype, kefahaman teknikal, dan kelayakan pelaksanaan. <em>(Wajaran 25%)</em></div>
+                </div>
+                <span class="score-bubble">20</span>
+              </div>
+              <input type="range" class="form-range" min="0" max="25" value="20">
+              <div class="d-flex justify-content-between small text-muted"><span>0</span><span>25 maks</span></div>
+            </div>
+
+            <div class="criterion-row">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div>
+                  <strong>3. Kualiti Persembahan</strong>
+                  <div class="small text-muted">Kejelasan video, slaid, dan komunikasi pasukan. <em>(Wajaran 20%)</em></div>
+                </div>
+                <span class="score-bubble">17</span>
+              </div>
+              <input type="range" class="form-range" min="0" max="20" value="17">
+              <div class="d-flex justify-content-between small text-muted"><span>0</span><span>20 maks</span></div>
+            </div>
+
+            <div class="criterion-row">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div>
+                  <strong>4. Impak Sosial &amp; Skalabiliti</strong>
+                  <div class="small text-muted">Potensi penyelesaian untuk memberi manfaat kepada komuniti yang lebih luas. <em>(Wajaran 25%)</em></div>
+                </div>
+                <span class="score-bubble" style="background: var(--color-accent-warm);">23</span>
+              </div>
+              <input type="range" class="form-range" min="0" max="25" value="23">
+              <div class="d-flex justify-content-between small text-muted"><span>0</span><span>25 maks</span></div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="mb-3">
+              <label class="form-label fw-medium">Komen / Maklum Balas Juri <small class="text-muted">(Opsional, untuk pasukan)</small></label>
+              <textarea class="form-control" rows="3" placeholder="Beri komen membina untuk pasukan...">Idea sangat menarik dan menyelesaikan masalah nyata. Prototipe sudah berfungsi dengan baik tetapi perlu diperhalusi dari segi durability komponen elektronik.</textarea>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+              <div>
+                <strong class="fs-4 text-primary">82</strong><span class="text-muted">/100</span>
+                <small class="text-muted ms-2">Jumlah markah</small>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-light">
+                  <i class="bi bi-save me-1"></i>Simpan Draf
+                </button>
+                <button class="btn btn-cta">
+                  <i class="bi bi-check-circle me-1"></i>Hantar Markah Akhir
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Team info -->
+      <div class="col-lg-4">
+        <div class="card mb-3">
+          <div class="card-header bg-white py-3">
+            <h5 class="mb-0"><i class="bi bi-info-circle me-2 text-primary"></i>Maklumat Pasukan</h5>
+          </div>
+          <div class="card-body">
+            <h4 class="mb-1">EcoBot Solutions</h4>
+            <span class="tag mb-3 d-inline-block">Teknologi Hijau</span>
+            <p class="text-muted small">Inovasi robot autonomi untuk pembersihan sungai dengan AI pengenalan jenis sampah.</p>
+
+            <hr class="divider">
+
+            <div class="row g-3 small">
+              <div class="col-12">
+                <div class="text-muted small">Sekolah</div>
+                <strong>SMK Seksyen 11 Shah Alam</strong>
+              </div>
+              <div class="col-6">
+                <div class="text-muted small">Negeri</div>
+                <strong>Selangor</strong>
+              </div>
+              <div class="col-6">
+                <div class="text-muted small">Kategori</div>
+                <strong>Menengah</strong>
+              </div>
+              <div class="col-12">
+                <div class="text-muted small">Guru Pengiring</div>
+                <strong>Cikgu Aishah binti Mohd Rashid</strong>
+              </div>
+            </div>
+
+            <hr class="divider">
+
+            <h6 class="mb-2">Peserta (4)</h6>
+            <ul class="list-unstyled mb-0 small">
+              <li class="mb-1"><i class="bi bi-person-circle text-primary me-1"></i> Aiman Hakim (Ketua) · Tingkatan 4</li>
+              <li class="mb-1"><i class="bi bi-person-circle text-primary me-1"></i> Sarah Mahfuz · Tingkatan 4</li>
+              <li class="mb-1"><i class="bi bi-person-circle text-primary me-1"></i> Devesh Kumar · Tingkatan 5</li>
+              <li><i class="bi bi-person-circle text-primary me-1"></i> Lim Wei Hong · Tingkatan 4</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Anti-bias notice -->
+        <div class="card border-0" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+          <div class="card-body">
+            <h6 class="mb-2"><i class="bi bi-shield-check text-warning me-2"></i>Notis Penjurian</h6>
+            <p class="small mb-0 text-primary-dark">Markah anda dilog dan diaudit. Pastikan penilaian adalah objektif berdasarkan rubrik. Sebarang konflik kepentingan mesti diisytiharkan kepada pentadbir.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

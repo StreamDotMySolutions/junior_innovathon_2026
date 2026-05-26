@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reka Bentuk UI — StreamDotMy CMS · Junior Innovathon 2026</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+  <nav class="app-nav">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a class="brand" href="index.html">
+        <span class="brand-icon"><i class="bi bi-stars"></i></span>
+        StreamDotMy CMS
+      </a>
+      <div class="d-none d-md-flex align-items-center gap-2">
+        <span class="badge bg-light text-primary-dark fw-medium">Design Proposals v1.0</span>
+        <span class="badge text-bg-warning fw-semibold">Junior Innovathon 2026</span>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero" style="padding: 3.5rem 0 4rem;">
+    <div class="container">
+      <span class="accent-bar">Mockup &amp; Reka Bentuk UI</span>
+      <h1 class="mb-3">Reka Bentuk Sistem — Pratonton Visual</h1>
+      <p class="lead mb-0">
+        Lapan mockup HTML interaktif menggambarkan UI untuk Pengguna (Awam, Guru, Juri) dan Pentadbir (Admin/CMS).
+        Konsisten dengan tema RTM kerajaan dengan aksen tenaga muda untuk audien pelajar.
+      </p>
+    </div>
+  </header>
+
+  <main class="container py-5">
+
+    <!-- Design tokens -->
+    <section class="mb-5">
+      <h2 class="section-title h3">Design Tokens</h2>
+      <p class="section-subtitle">Asas sistem reka bentuk — warna, tipografi, dan komponen yang konsisten merentas semua halaman.</p>
+
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="color-swatch" style="background: #0d3b66;"></div>
+          <div class="mt-2"><strong>Primary</strong><br><span class="tag">#0d3b66</span></div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="color-swatch" style="background: #062c52;"></div>
+          <div class="mt-2"><strong>Primary Dark</strong><br><span class="tag">#062c52</span></div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="color-swatch" style="background: #ffc107;"></div>
+          <div class="mt-2"><strong>Accent</strong><br><span class="tag">#ffc107</span></div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="color-swatch" style="background: #ff6b35;"></div>
+          <div class="mt-2"><strong>Accent Warm (CTA)</strong><br><span class="tag">#ff6b35</span></div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="card p-3">
+            <small class="text-muted">Heading — Poppins</small>
+            <h3 class="mb-0" style="font-size: 1.5rem;">Junior Innovathon 2026</h3>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card p-3">
+            <small class="text-muted">Body — Inter</small>
+            <p class="mb-0">Platform rasmi pertandingan inovasi pelajar Malaysia, dianjurkan oleh Jabatan Penyiaran Malaysia.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- User pages -->
+    <section class="mb-5">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+          <h2 class="section-title h3 mb-1">Halaman Pengguna</h2>
+          <p class="text-muted mb-0">Untuk peranan Awam, Guru, dan Juri.</p>
+        </div>
+        <span class="badge bg-light text-primary-dark fs-6">4 mockup</span>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <a href="user/01-landing.html" class="text-decoration-none">
+            <div class="card card-hover h-100">
+              <div class="ratio ratio-16x9 bg-primary rounded-top">
+                <div class="d-flex align-items-center justify-content-center text-white">
+                  <i class="bi bi-globe" style="font-size: 2.5rem;"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h5 class="mb-1">01 — Landing Portal Awam</h5>
+                <p class="text-muted small mb-0">Hero banner, fasa pertandingan, jadual episod, statistik.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <a href="user/02-pendaftaran.html" class="text-decoration-none">
+            <div class="card card-hover h-100">
+              <div class="ratio ratio-16x9 rounded-top" style="background: linear-gradient(135deg, #1e5a99, #0d3b66);">
+                <div class="d-flex align-items-center justify-content-center text-white">
+                  <i class="bi bi-pencil-square" style="font-size: 2.5rem;"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h5 class="mb-1">02 — Pendaftaran</h5>
+                <p class="text-muted small mb-0">Wizard 5-langkah: sekolah → pasukan → peserta → bahan → semakan.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <a href="user/03-guru-dashboard.html" class="text-decoration-none">
+            <div class="card card-hover h-100">
+              <div class="ratio ratio-16x9 rounded-top" style="background: linear-gradient(135deg, #0d3b66, #062c52);">
+                <div class="d-flex align-items-center justify-content-center text-white">
+                  <i class="bi bi-people" style="font-size: 2.5rem;"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h5 class="mb-1">03 — Dashboard Guru</h5>
+                <p class="text-muted small mb-0">Senarai pasukan, status submission, profil sekolah.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <a href="user/04-juri-scoring.html" class="text-decoration-none">
+            <div class="card card-hover h-100">
+              <div class="ratio ratio-16x9 rounded-top" style="background: linear-gradient(135deg, #ff6b35, #0d3b66);">
+                <div class="d-flex align-items-center justify-content-center text-white">
+                  <i class="bi bi-clipboard-check" style="font-size: 2.5rem;"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h5 class="mb-1">04 — Penjurian (Juri)</h5>
+                <p class="text-muted small mb-0">Video player, slaid carousel, borang pemarkahan rubrik.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin pages -->
+    <section class="mb-5">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+          <h2 class="section-title h3 mb-1">Halaman Pentadbir (CMS)</h2>
+          <p class="text-muted mb-0">Untuk Admin dan SuperAdmin RTM.</p>
+        </div>
+        <span class="badge bg-light text-primary-dark fs-6">4 mockup</span>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <a href="admin/01-dashboard.html" class="text-decoration-none">
+            <div class="card card-hover h-100">
+              <div class="ratio ratio-16x9 rounded-top" style="background: linear-gradient(135deg, #0d3b66, #1e5a99);">
+                <div class="d-flex align-items-center justify-content-center text-white">
+                  <i class="bi bi-speedometer2" style="font-size: 2.5rem;"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h5 class="mb-1">01 — Dashboard Admin</h5>
+                <p class="text-muted small mb-0">Stats cards, carta trend, recent activity, episod akan datang.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <a href="admin/02-submissions.html" class="text-decoration-none">
+            <div class="card card-hover h-100">
+              <div class="ratio ratio-16x9 rounded-top" style="background: linear-gradient(135deg, #1e5a99, #0d3b66);">
+                <div class="d-flex align-items-center justify-content-center text-white">
+                  <i class="bi bi-collection" style="font-size: 2.5rem;"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h5 class="mb-1">02 — Pengurusan Penyertaan</h5>
+                <p class="text-muted small mb-0">Filter, bulk action, table dengan status, eksport Excel.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <a href="admin/03-cms.html" class="text-decoration-none">
+            <div class="card card-hover h-100">
+              <div class="ratio ratio-16x9 rounded-top" style="background: linear-gradient(135deg, #062c52, #0d3b66);">
+                <div class="d-flex align-items-center justify-content-center text-white">
+                  <i class="bi bi-pencil" style="font-size: 2.5rem;"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h5 class="mb-1">03 — Editor Kandungan</h5>
+                <p class="text-muted small mb-0">CMS halaman, pengumuman, media library dengan WYSIWYG.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <a href="admin/04-analytics.html" class="text-decoration-none">
+            <div class="card card-hover h-100">
+              <div class="ratio ratio-16x9 rounded-top" style="background: linear-gradient(135deg, #ffc107, #ff6b35);">
+                <div class="d-flex align-items-center justify-content-center" style="color: #062c52;">
+                  <i class="bi bi-bar-chart-line" style="font-size: 2.5rem;"></i>
+                </div>
+              </div>
+              <div class="card-body">
+                <h5 class="mb-1">04 — Analitik</h5>
+                <p class="text-muted small mb-0">3-tier dashboard, carta, peta Malaysia, eksport laporan.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notes -->
+    <section class="card p-4 bg-white">
+      <h4 class="mb-3"><i class="bi bi-info-circle text-primary me-2"></i>Nota Mockup</h4>
+      <ul class="mb-0">
+        <li>Mockup dibina dengan <strong>Bootstrap 5.3</strong> + <strong>Bootstrap Icons</strong> + <strong>Google Fonts</strong> (Poppins/Inter) via CDN.</li>
+        <li>Setiap halaman <strong>self-contained</strong> — boleh dibuka direct dalam browser.</li>
+        <li><strong>Mobile-responsive</strong> automatik (Bootstrap grid).</li>
+        <li>Sample data dalam Bahasa Melayu dengan nama sekolah dan peserta yang realistik.</li>
+        <li>Tema warna RTM Biru Klasik + aksen kuning/oren untuk audien pelajar.</li>
+        <li>Untuk eksport PNG/PDF, gunakan browser screenshot atau Chrome DevTools (Cmd+Shift+P → "Capture full size screenshot").</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="brand text-white mb-2">
+            <span class="brand-icon"><i class="bi bi-stars"></i></span>
+            StreamDotMy CMS
+          </div>
+          <p class="small mb-0" style="color: rgba(255,255,255,0.65);">
+            Reka bentuk UI untuk Sistem Pendaftaran, Saringan, Penjurian dan Pelaporan Program Realiti Junior Innovathon 2026.
+          </p>
+        </div>
+        <div class="col-md-3">
+          <h6>Pautan</h6>
+          <a href="index.html">Home</a><br>
+          <a href="user/01-landing.html">User Pages</a><br>
+          <a href="admin/01-dashboard.html">Admin Pages</a>
+        </div>
+        <div class="col-md-3">
+          <h6>Stream.My</h6>
+          <a href="https://streamdotmy.com" target="_blank">streamdotmy.com</a><br>
+          <a href="mailto:sales@stream.my">sales@stream.my</a>
+        </div>
+      </div>
+      <div class="copyright text-center">
+        © 2026 Stream.My Sdn. Bhd. · Mockup untuk Technical Proposal RTM Junior Innovathon 2026.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

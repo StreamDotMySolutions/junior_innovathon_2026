@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pendaftaran Pasukan — Junior Innovathon 2026</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+  <nav class="app-nav sticky-top">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a class="brand" href="01-landing.html">
+        <span class="brand-icon"><i class="bi bi-stars"></i></span>
+        Junior Innovathon 2026
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <span class="d-none d-md-inline small text-muted">Sesi log masuk:</span>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle me-1"></i> Cikgu Aishah
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+
+    <div class="d-flex align-items-center gap-2 mb-3 small text-muted">
+      <a href="01-landing.html" class="text-muted text-decoration-none">Laman Utama</a>
+      <i class="bi bi-chevron-right"></i>
+      <a href="03-guru-dashboard.html" class="text-muted text-decoration-none">Dashboard Guru</a>
+      <i class="bi bi-chevron-right"></i>
+      <span class="text-primary">Pendaftaran Pasukan Baru</span>
+    </div>
+
+    <h2 class="mb-1">Pendaftaran Pasukan Baru</h2>
+    <p class="text-muted">Lengkapkan 5 langkah berikut untuk mendaftar pasukan sekolah anda.</p>
+
+    <!-- Step indicator -->
+    <div class="card p-4 mt-4">
+      <div class="step-indicator">
+        <div class="step-item active">
+          <div class="step-circle">1</div>
+          <div class="step-label">Sekolah</div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">2</div>
+          <div class="step-label">Pasukan</div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">3</div>
+          <div class="step-label">Peserta</div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">4</div>
+          <div class="step-label">Bahan</div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">5</div>
+          <div class="step-label">Semakan</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <h5 class="mb-3"><i class="bi bi-building text-primary me-2"></i>Langkah 1 — Maklumat Sekolah</h5>
+          <p class="text-muted small mb-4">Cari sekolah anda dari Pangkalan Data Sekolah KPM. Maklumat akan diisi secara automatik.</p>
+
+          <div class="mb-3">
+            <label class="form-label fw-medium">Carian Sekolah <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control" value="SMK Seksyen 11 Shah Alam" placeholder="Taip kod sekolah atau nama...">
+            </div>
+            <div class="form-text">Pilih dari senarai auto-cadangan.</div>
+          </div>
+
+          <div class="card bg-light border-0 p-3 mb-3">
+            <small class="text-muted mb-2">Maklumat Sekolah</small>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <small class="text-muted">Kod Sekolah</small>
+                <div class="fw-medium">BEA0078</div>
+              </div>
+              <div class="col-md-6">
+                <small class="text-muted">Jenis Sekolah</small>
+                <div class="fw-medium">SMK (Menengah Kebangsaan)</div>
+              </div>
+              <div class="col-md-6">
+                <small class="text-muted">Negeri</small>
+                <div class="fw-medium">Selangor</div>
+              </div>
+              <div class="col-md-6">
+                <small class="text-muted">Daerah</small>
+                <div class="fw-medium">Petaling Utama</div>
+              </div>
+              <div class="col-md-6">
+                <small class="text-muted">PPD</small>
+                <div class="fw-medium">PPD Petaling Utama</div>
+              </div>
+              <div class="col-md-6">
+                <small class="text-muted">Telefon Sekolah</small>
+                <div class="fw-medium">03-5510 4500</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-medium">Saya guru penyelaras pasukan ini <span class="text-danger">*</span></label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="confirmGuru" checked>
+              <label class="form-check-label" for="confirmGuru">
+                Saya mengesahkan bahawa saya adalah <strong>Cikgu Aishah binti Mohd Rashid</strong>, guru di SMK Seksyen 11 Shah Alam, dan saya berhak mendaftar pasukan bagi pihak sekolah ini.
+              </label>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <div class="d-flex justify-content-between">
+            <a href="03-guru-dashboard.html" class="btn btn-light">
+              <i class="bi bi-x-circle me-1"></i> Batal
+            </a>
+            <button class="btn btn-primary">
+              Seterusnya: Pasukan <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tips sidebar -->
+        <div class="col-lg-4">
+          <div class="card bg-light border-0 p-3 mb-3">
+            <h6 class="mb-3"><i class="bi bi-lightbulb text-warning me-2"></i>Tips Pendaftaran</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--color-text-secondary);">
+              <li class="mb-2">Pastikan sekolah anda berdaftar dengan KPM.</li>
+              <li class="mb-2">Anda boleh mendaftar lebih daripada 1 pasukan dari sekolah yang sama.</li>
+              <li class="mb-2">Setiap pasukan: 2–4 pelajar + 1 guru pengiring.</li>
+              <li class="mb-2">Maklumat boleh diubah suai sebelum hantar akhir (status Draft).</li>
+              <li>Hubungi helpdesk jika sekolah tidak dijumpai.</li>
+            </ul>
+          </div>
+
+          <div class="card p-3 border-0" style="background: linear-gradient(135deg, #ffc107, #ff6b35);">
+            <h6 class="text-white mb-2"><i class="bi bi-chat-dots me-2"></i>Perlukan Bantuan?</h6>
+            <p class="small mb-3 text-white">Tanya AI Chatbot 24/7 melalui WhatsApp atau Telegram.</p>
+            <a href="#" class="btn btn-light btn-sm">
+              <i class="bi bi-whatsapp text-success me-1"></i> Buka WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="chatbot-fab" title="Tanya AI Chatbot">
+    <i class="bi bi-chat-dots"></i>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
