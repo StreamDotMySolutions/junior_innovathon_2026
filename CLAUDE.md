@@ -54,6 +54,7 @@ Plus `docs/NGeP-QT-Documents/` (procurement terms, sample letters) and `docs/Fin
 |---|---|---|
 | Frontend | **ReactJS 18 + JavaScript (JSX, no TypeScript) + Vite + Bootstrap 5** | User decision 2026-05-31: JS only, no TS (see `docs/frontend/`) |
 | Backend | **Laravel** (latest) — API only | Mandated by tender Lampiran 1 |
+| Web server | **nginx** + PHP-FPM | SPA static + reverse proxy `/api` → Laravel; same-origin for Sanctum cookie (see `docs/deployment/`) |
 | Database | **MySQL 8** (on RDS Multi-AZ) | Mandated by tender |
 | Cache & queue | **Redis** (on ElastiCache Multi-AZ) | Our choice |
 | Auth | **Laravel Sanctum** SPA cookie session | Same-domain SPA pattern |
@@ -223,7 +224,9 @@ Headline decisions:
 │   │   ├── README.md                  ← RBAC, controllers, services, requests, JSON, Sanctum, /api/v1, middleware
 │   │   └── testing.md                 ← Pest 3.x testing conventions
 │   ├── frontend/                      ← ReactJS (JS/JSX) design conventions
-│   │   └── README.md                  ← Bootstrap 5, role layouts, mobile/desktop split, Axios, env, Laravel naming
+│   │   └── README.md                  ← Bootstrap 5, role layouts, mobile/desktop split, Axios, env, Laravel naming, routing, auth, errors
+│   ├── deployment/                    ← web server / routing conventions
+│   │   └── README.md                  ← nginx same-origin, /api/v1 routing, avoid double-/api, CloudFront alt
 │   └── internal/
 │       └── decisions-log.md           ← chronological decisions
 └── (backend/ and frontend/ code will appear when scaffolding starts post-SST)

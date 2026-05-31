@@ -174,6 +174,21 @@ Several proposal drafts produced under `docs/proposal-drafts/`:
 
 ---
 
+## 2026-05-31 — Web server (nginx) & same-origin routing
+
+**Context:** User confirmed web server is **nginx**, Laravel lives in an `/api` folder, accessed as `/api/v1` in the browser. Documented routing recommendations.
+
+**Decisions:**
+1. **Same-origin** — SPA at `/`, API at `/api/v1/*` on one domain so Sanctum SPA cookie works (no cross-domain cookie).
+2. **Avoid double `/api`** — Laravel auto-prefixes `routes/api.php` with `api` (`apiPrefix`), plus our `Route::prefix('v1')` → `/api/v1`. nginx must pass the URI intact; folder name `/api` ≠ URL prefix. Verify via `php artisan route:list`.
+3. **nginx pattern** — `location ^~ /api/` → php-fpm (Laravel `public/`); everything else → React build with `try_files … /index.html` (React Router refresh support). `client_max_body_size` raised for video/slide uploads.
+4. **Sanctum env** — `SESSION_DOMAIN`, `SANCTUM_STATEFUL_DOMAINS`, `SESSION_SECURE_COOKIE=true`; TrustProxies so HTTPS/Secure cookie detected behind proxy.
+5. **AWS-native alternative** — CloudFront path-based origins (`/api/*` → ALB→ECS Laravel, `/*` → S3 SPA) for same-origin at scale; both patterns valid, final topology TBD in URS.
+
+**Artifact:** `docs/deployment/README.md`.
+
+---
+
 ## Open questions for URS sessions with RTM
 
 These were flagged in earlier drafts and need resolution during URS sessions:

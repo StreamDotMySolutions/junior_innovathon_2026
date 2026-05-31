@@ -459,6 +459,29 @@ export default function ProtectedRoute({ role, children }) {
 
 **Prinsip:** frontend **tidak dipercayai** sebagai sempadan keselamatan. Setiap request membawa cookie sesi Sanctum (`withCredentials`, automatik), dan **server** mengesahkan sesi + role pada setiap panggilan API (role middleware backend §1). ProtectedRoute hanya untuk pengalaman pengguna (UX) — bukan kawalan sebenar.
 
+### Aliran login (Sanctum SPA cookie — React TIDAK pegang token)
+
+```
+1. React   →  GET  /sanctum/csrf-cookie                    (sekali, sebelum login)
+              ←  Set-Cookie: XSRF-TOKEN (boleh dibaca JS), laravel_session
+
+2. React   →  POST /api/v1/login { email, password }       (withCredentials + X-XSRF-TOKEN)
+   Laravel  →  sahkan kelayakan → regenerate session
+              ←  204 No Content
+                 Set-Cookie: laravel_session=…; HttpOnly; Secure; SameSite=Lax
+   ⮑ Browser simpan cookie automatik — React simpan TIADA token
+
+3. React   →  GET  /api/v1/me                              (cookie auto-dihantar)
+              ←  200 { data: { id, nama, roles: [...] } }   → isi AuthContext
+
+4. Request seterusnya  →  cookie httpOnly auto + X-XSRF-TOKEN
+                       →  server sahkan sesi + role (middleware) pada SETIAP request
+
+5. Logout  →  POST /api/v1/logout  →  server batal sesi, cookie dipadam
+```
+
+> **Token disimpan di mana?** Dalam **cookie `httpOnly`** yang diuruskan **browser** — bukan dalam React, bukan `localStorage`/`sessionStorage`. JS tak boleh baca cookie itu (kebal XSS). Mod ini hanya berfungsi jika SPA + API **sama domain** (lihat `docs/deployment/README.md`).
+
 ### Storan token — guna cookie `httpOnly`, bukan localStorage/sessionStorage
 
 | Pilihan | Kebal XSS? | Hantar auto | Keputusan |
