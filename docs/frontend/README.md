@@ -290,9 +290,14 @@ frontend/
     ├── App.jsx
     ├── styles/app.scss           ← import + tema Bootstrap 5
     ├── config/index.js           ← baca VITE_* env (§6)
-    ├── router/
-    │   ├── index.jsx
-    │   └── ProtectedRoute.jsx     ← gate ikut role (cermin role middleware backend)
+    ├── router/                    ← folder route khusus, ikut role (§9, cermin Laravel routes/)
+    │   ├── index.jsx              ← gabung semua fail route (cermin routes/api.php)
+    │   ├── ProtectedRoute.jsx     ← gate ikut role (cermin role middleware backend)
+    │   └── routes/
+    │       ├── guru.jsx
+    │       ├── juri.jsx
+    │       ├── admin.jsx
+    │       └── awam.jsx
     ├── layouts/                   ← layout ikut role + mobile/desktop (§3, §4)
     ├── views/                     ← "views" ikut role (§8)
     ├── components/                ← komponen UI boleh guna semula
@@ -302,6 +307,132 @@ frontend/
     ├── context/                   ← AuthContext (sesi Sanctum)
     └── assets/
 ```
+
+---
+
+## 9. Routing — Ikut Role & Konvensyen Laravel
+
+Route disusun dalam **folder khusus** (`src/router/`), **satu fail per role**, dan digabung di `index.jsx` — sama seperti Laravel mengumpul route dalam `routes/` dan menggabung dengan `Route::prefix()->group()`. URL ikut konvensyen Laravel: **kebab-case** + **resourceful**.
+
+### Struktur folder route
+
+```
+src/router/
+├── index.jsx              ← gabung semua + prefix role + gate  (cermin routes/api.php)
+├── ProtectedRoute.jsx     ← gate ikut role (cermin role middleware backend)
+└── routes/
+    ├── guru.jsx           ← (cermin routes/api/v1/guru.php)
+    ├── juri.jsx
+    ├── admin.jsx
+    └── awam.jsx
+```
+
+### Konvensyen URL — resourceful (ikut Laravel)
+
+URL frontend memetakan corak URI resourceful Laravel. Prefix role, kebab-case, parameter `{x}` → `:x`.
+
+| Tujuan | Laravel URI | Path React Router | View |
+|---|---|---|---|
+| Senarai | `GET /guru/pasukan` | `/guru/pasukan` | `views/guru/PasukanSenarai.jsx` |
+| Borang cipta | `GET /guru/pasukan/create` | `/guru/pasukan/create` | `PasukanCipta.jsx` |
+| Butiran (show) | `GET /guru/pasukan/{pasukan}` | `/guru/pasukan/:pasukan` | `PasukanButiran.jsx` |
+| Borang edit | `GET /guru/pasukan/{pasukan}/edit` | `/guru/pasukan/:pasukan/edit` | `PasukanEdit.jsx` |
+| Tindakan khas | — | `/juri/penjurian-studio` | `PenjurianStudio.jsx` |
+
+> Nota: SPA hanya ada navigasi jenis-GET; `store`/`update`/`destroy` (POST/PUT/DELETE) dibuat melalui modul Axios (§5). Tapi **corak URI dikekalkan** supaya selari dengan backend.
+
+### Fail route per role
+
+Setiap fail mengeksport array *route object* (path relatif) — seperti satu fail route Laravel mengisi satu prefix group. Guna `React.lazy` untuk code-splitting ikut role.
+
+```jsx
+// src/router/routes/guru.jsx   (cermin routes/api/v1/guru.php)
+import { lazy } from "react";
+
+const GuruDashboard   = lazy(() => import("@/views/guru/Dashboard.jsx"));
+const Pendaftaran     = lazy(() => import("@/views/guru/Pendaftaran.jsx"));
+const PasukanSenarai  = lazy(() => import("@/views/guru/PasukanSenarai.jsx"));
+const PasukanCipta    = lazy(() => import("@/views/guru/PasukanCipta.jsx"));
+const PasukanButiran  = lazy(() => import("@/views/guru/PasukanButiran.jsx"));
+const PasukanEdit     = lazy(() => import("@/views/guru/PasukanEdit.jsx"));
+
+// path relatif kepada prefix "/guru" (ditetapkan di index.jsx)
+export default [
+  { index: true,                       element: <GuruDashboard /> },
+  { path: "pendaftaran",               element: <Pendaftaran /> },
+  { path: "pasukan",                   element: <PasukanSenarai /> },
+  { path: "pasukan/create",            element: <PasukanCipta /> },
+  { path: "pasukan/:pasukan",          element: <PasukanButiran /> },
+  { path: "pasukan/:pasukan/edit",     element: <PasukanEdit /> },
+];
+```
+
+### Gabungan + prefix role + gate (`index.jsx`)
+
+```jsx
+// src/router/index.jsx   (cermin routes/api.php — prefix + middleware group)
+import { createBrowserRouter } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute.jsx";
+import AwamLayout  from "@/layouts/awam";
+import GuruLayout  from "@/layouts/guru";
+import JuriLayout  from "@/layouts/juri";
+import AdminLayout from "@/layouts/admin";
+import awamRoutes  from "./routes/awam.jsx";
+import guruRoutes  from "./routes/guru.jsx";
+import juriRoutes  from "./routes/juri.jsx";
+import adminRoutes from "./routes/admin.jsx";
+
+export const router = createBrowserRouter([
+  // Awam — awam, tiada auth
+  { path: "/", element: <AwamLayout />, children: awamRoutes },
+
+  // Guru / Juri / Admin — prefix + gate ikut role (cermin middleware role:*)
+  {
+    path: "/guru",
+    element: <ProtectedRoute role="guru"><GuruLayout /></ProtectedRoute>,
+    children: guruRoutes,
+  },
+  {
+    path: "/juri",
+    element: <ProtectedRoute role="juri"><JuriLayout /></ProtectedRoute>,
+    children: juriRoutes,
+  },
+  {
+    path: "/admin",
+    element: <ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>,
+    children: adminRoutes,
+  },
+
+  { path: "/403", element: <Larangan /> },
+  { path: "*",    element: <TidakDijumpai /> },
+]);
+```
+
+### Gate ikut role (`ProtectedRoute.jsx`)
+
+Cermin role middleware backend (§1 backend): tiada sesi → `/login`; role salah → `/403`.
+
+```jsx
+// src/router/ProtectedRoute.jsx
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+
+export default function ProtectedRoute({ role, children }) {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+
+  if (loading) return <PemuatSkeleton />;
+  if (!user)   return <Navigate to="/login" state={{ from: location }} replace />;
+  if (role && !user.roles.includes(role)) return <Navigate to="/403" replace />;
+
+  return children;
+}
+```
+
+**Peraturan:**
+- Prefix role ditetapkan **sekali** di `index.jsx` (bukan diulang dalam setiap fail) — seperti `Route::prefix('guru')` Laravel.
+- Layout role jadi *parent element*; view dirender dalam `<Outlet />` layout tersebut.
+- Gate route di frontend adalah UX sahaja — **penguatkuasaan sebenar tetap di backend** (role middleware + Sanctum).
 
 ---
 
