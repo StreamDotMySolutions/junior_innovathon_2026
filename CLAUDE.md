@@ -52,7 +52,7 @@ Plus `docs/NGeP-QT-Documents/` (procurement terms, sample letters) and `docs/Fin
 
 | Layer | Tech | Why |
 |---|---|---|
-| Frontend | **ReactJS 18 + TypeScript + Vite + Bootstrap 5** | Our choice; same as Stream.My's existing RTM portals |
+| Frontend | **ReactJS 18 + JavaScript (JSX, no TypeScript) + Vite + Bootstrap 5** | User decision 2026-05-31: JS only, no TS (see `docs/frontend/`) |
 | Backend | **Laravel** (latest) — API only | Mandated by tender Lampiran 1 |
 | Database | **MySQL 8** (on RDS Multi-AZ) | Mandated by tender |
 | Cache & queue | **Redis** (on ElastiCache Multi-AZ) | Our choice |
@@ -180,6 +180,7 @@ Headline decisions:
 9. Streaming: nginx-rtmp on EC2 + HLS pipeline (in-house, not AWS MediaLive)
 10. Design hosting (mockups): pure AWS (S3 + CloudFront + Route 53) — Cloudflare not used yet
 11. Backend conventions (locked, see `docs/backend/`): Spatie RBAC · controllers grouped by role under `Api/V1/` · service layer (thin controllers) · Form Request validation foldered by controller · JSON-only responses · Sanctum auth · `/api/v1` versioning (HTTP layer only; services/models shared) · **Pest 3.x** tests with Arch enforcement · 3-layer middleware stack
+12. Frontend conventions (locked, see `docs/frontend/`): ReactJS 18 + Vite, **JavaScript/JSX — no TypeScript** (reversal of earlier TS choice) · Bootstrap 5 via SCSS · role-based layouts with **separate mobile/desktop files** · Axios single instance (Sanctum SPA) · env via `VITE_*` · Laravel-style naming · `views/` + `helpers/` grouped by role. Recommended: PropTypes, TanStack Query (polling), React Router, Vitest
 
 ## Working notes for Claude (across machines)
 
@@ -220,6 +221,8 @@ Headline decisions:
 │   ├── backend/                       ← Laravel API design conventions
 │   │   ├── README.md                  ← RBAC, controllers, services, requests, JSON, Sanctum, /api/v1, middleware
 │   │   └── testing.md                 ← Pest 3.x testing conventions
+│   ├── frontend/                      ← ReactJS (JS/JSX) design conventions
+│   │   └── README.md                  ← Bootstrap 5, role layouts, mobile/desktop split, Axios, env, Laravel naming
 │   └── internal/
 │       └── decisions-log.md           ← chronological decisions
 └── (backend/ and frontend/ code will appear when scaffolding starts post-SST)

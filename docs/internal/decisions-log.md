@@ -124,6 +124,28 @@ Several proposal drafts produced under `docs/proposal-drafts/`:
 
 ---
 
+## 2026-05-31 — Frontend design conventions locked (+ TypeScript dropped)
+
+**Context:** Defining ReactJS frontend conventions, pairing with the backend conventions. Documented under new `docs/frontend/` folder.
+
+**Decisions:**
+1. **JavaScript only — TypeScript DROPPED.** ⚠️ Reversal of the earlier stack choice (`CLAUDE.md` listed React 18 + TypeScript). User decided JS/JSX only. Compensating measures recommended: PropTypes, ESLint, Vitest, JSDoc.
+2. **Bootstrap 5** via SCSS import (themeable for RTM colours) — not CDN; consistent with existing mockups.
+3. **Role-based layouts** — `src/layouts/{guru,juri,admin,awam}/`.
+4. **Mobile & desktop layouts in separate files** — e.g. `GuruLayoutMobile.jsx` / `GuruLayoutDesktop.jsx`, picked by a `useIsMobile` breakpoint resolver (Bootstrap lg = 992px).
+5. **Axios single instance** (`src/api/http.js`) — `withCredentials` + CSRF for Sanctum SPA; API modules grouped by role mirroring backend controllers; no direct `axios` in components.
+6. **Config via env** — Vite `VITE_*` keys, read through one `src/config/index.js`; `.env` not committed, `.env.example` is.
+7. **Laravel-style naming** — components/layouts PascalCase `.jsx`; role folders lowercase; functions/hooks camelCase; non-class modules lowercase `.js`; routes kebab-case; env UPPER_SNAKE.
+8. **Views & helpers mirror Laravel** — `src/views/{role}/` (like `resources/views`), repeated JS functions in `src/helpers/` (like Laravel helpers), grouped by domain.
+
+**Recommendations (not mandatory):** PropTypes, TanStack Query (its `refetchInterval` fits studio-scoring polling), React Router v6 + ProtectedRoute (mirrors backend role middleware), react-bootstrap, ESLint+Prettier, `@/` path alias, Vitest + RTL, role code-splitting, AuthContext, centralised error toast.
+
+**Rationale:** Frontend structure mirrors backend (role grouping) for consistency and easy RTM handover (§ 3.14). JS-only honours the user's decision despite the long-term tradeoffs of dropping TS (noted in doc).
+
+**Artifact:** `docs/frontend/README.md`.
+
+---
+
 ## Open questions for URS sessions with RTM
 
 These were flagged in earlier drafts and need resolution during URS sessions:
