@@ -160,6 +160,20 @@ Several proposal drafts produced under `docs/proposal-drafts/`:
 
 ---
 
+## 2026-05-31 — Frontend auth, token storage & error handling
+
+**Context:** Refining ProtectedRoute behaviour, token storage choice, and HTTP error handling for the React SPA.
+
+**Decisions:**
+1. **Token storage = Sanctum `httpOnly` cookie — NOT localStorage/sessionStorage.** Token never touches JavaScript (XSS-safe); cookie sent automatically via `withCredentials`; CSRF via Sanctum. Only non-sensitive UI state (user profile + roles) kept in memory (AuthContext / TanStack Query cache). `sessionStorage > localStorage` only if a JS token is ever unavoidable (e.g. kiosk) — exception, not default.
+2. **Server is the real gate.** ProtectedRoute is UX only; every API request carries the cookie and the backend enforces session + role (role middleware). `useAuth` revalidates `me` via TanStack Query (refetch on window focus).
+3. **Detailed error mapping** in the central Axios interceptor: 401→/login, 403→/403, 404→/404, 419→CSRF refresh+retry, 422→form (inline BM), 500/503→/ralat-pelayan, no-response→/ralat-rangkaian. API forced to JSON (no 302 redirects) via backend `ForceJsonResponse`.
+4. **Special error pages** under `src/views/ralat/` (Larangan 403, TidakDijumpai 404, RalatPelayan 500, RalatRangkaian) + React Error Boundary for render errors. Laravel `message` shown to user; `exception/file/line` only when `import.meta.env.DEV`.
+
+**Artifact:** `docs/frontend/README.md` §10–§11.
+
+---
+
 ## Open questions for URS sessions with RTM
 
 These were flagged in earlier drafts and need resolution during URS sessions:

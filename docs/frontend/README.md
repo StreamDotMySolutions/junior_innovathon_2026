@@ -455,6 +455,148 @@ export default function ProtectedRoute({ role, children }) {
 
 ---
 
+## 10. Autentikasi & Protected Route — Server yang Sahkan
+
+**Prinsip:** frontend **tidak dipercayai** sebagai sempadan keselamatan. Setiap request membawa cookie sesi Sanctum (`withCredentials`, automatik), dan **server** mengesahkan sesi + role pada setiap panggilan API (role middleware backend §1). ProtectedRoute hanya untuk pengalaman pengguna (UX) — bukan kawalan sebenar.
+
+### Storan token — guna cookie `httpOnly`, bukan localStorage/sessionStorage
+
+| Pilihan | Kebal XSS? | Hantar auto | Keputusan |
+|---|---|---|---|
+| **Cookie `httpOnly` (Sanctum SPA)** | ✅ Ya — JS tak boleh baca | ✅ Ya (`withCredentials`) | ✅ **Pilihan projek** |
+| `localStorage` | ❌ Terdedah XSS | ❌ Manual header | Tidak |
+| `sessionStorage` | ❌ Terdedah XSS | ❌ Manual header | Tidak (kecuali kiosk token) |
+
+- **Token tidak disimpan dalam JavaScript.** Sesi hidup dalam cookie `httpOnly` + `Secure` + `SameSite` — diuruskan Sanctum, kebal daripada pencurian melalui XSS. CSRF dilindungi oleh token CSRF Sanctum (§5 `initCsrf`).
+- Yang disimpan di frontend hanyalah **keadaan UI tak sensitif** (profil + role pengguna) dalam **memori** (AuthContext / cache TanStack Query) — **bukan** token. Boleh dicermin ke `sessionStorage` untuk UX muat-semula tab, tetapi tidak wajib dan tidak mengandungi rahsia.
+- Jika satu hari perlu token JS sebenar (cth. kiosk luar SPA), barulah **`sessionStorage` lebih baik daripada `localStorage`** (jangka hayat lebih pendek, tidak dikongsi antara tab) — tetapi ini pengecualian, bukan default.
+
+### "Sentiasa sahkan dengan API"
+
+Sesi disahkan oleh server, bukan diandaikan dari client. Guna satu query `me` (TanStack Query) yang refetch bila tab difokus + selepas tindakan penting:
+
+```js
+// src/api/auth.js
+import http from "@/api/http";
+export const me     = () => http.get("/me");           // 200 = sah, 401 = tidak
+export const login  = (data) => http.post("/login", data);
+export const logout = () => http.post("/logout");
+```
+
+```jsx
+// src/hooks/useAuth.js — server yang sahkan; cache + revalidate
+import { useQuery } from "@tanstack/react-query";
+import { me } from "@/api/auth";
+
+export function useAuth() {
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["auth", "me"],
+    queryFn: () => me().then((r) => r.data.data),
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,        // sahkan semula bila pengguna kembali
+  });
+  return { user, loading: isLoading };
+}
+```
+
+- `ProtectedRoute` (§9) baca `useAuth` — tiada `user` (401) → `/login`; role salah → `/403`.
+- **Penguatkuasaan sebenar tetap di setiap endpoint data**: walaupun seseorang memintas gate frontend, server pulangkan **403/401** kerana role middleware + Sanctum. Itu sebabnya frontend "sentiasa hantar" (cookie) untuk disahkan server.
+
+---
+
+## 11. Pengendalian Ralat — Terperinci + Paparan Khas
+
+Interceptor Axios berpusat (lanjutan §5) memetakan **setiap kod status** kepada tindakan, dan ada **halaman ralat khas** yang memaparkan mesej dari Laravel.
+
+### Pemetaan kod status
+
+| Status | Maksud | Tindakan frontend |
+|---|---|---|
+| **302** | Redirect | **Dielak pada API** — `ForceJsonResponse` (backend §1.1) memaksa **401 JSON**, bukan redirect ke halaman login. Jika 302 tetap berlaku, axios ikut auto; kita pastikan API sentiasa JSON. |
+| **401** | Tidak log masuk / sesi tamat | Bersihkan cache `me` → redirect `/login` |
+| **403** | Tiada kebenaran (role tak cukup) | Papar halaman khas `/403` |
+| **404** | Sumber tiada | Papar `/404` (untuk navigasi; ralat *data-fetch* boleh dikendali setempat) |
+| **419** | Token CSRF luput | `initCsrf()` + ulang request automatik (§5) |
+| **422** | Ralat validasi | **Tidak** redirect — pulangkan `errors` ke borang (mesej BM medan demi medan) |
+| **500 / 503** | Ralat pelayan | Papar `/500` + butiran ralat Laravel |
+| Tiada respons | Rangkaian / offline | Papar `/ralat-rangkaian` |
+
+```js
+// src/api/http.js — sambungan interceptor (§5)
+import { router } from "@/router";
+
+http.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    const res = err.response;
+    if (!res) { router.navigate("/ralat-rangkaian"); return Promise.reject(err); }
+
+    switch (res.status) {
+      case 401: router.navigate("/login"); break;
+      case 403: router.navigate("/403"); break;
+      case 404: router.navigate("/404"); break;            // boleh ditindih setempat
+      case 419: return initCsrf().then(() => http(err.config));
+      case 422: break;                                       // dikendali borang
+      case 500:
+      case 503: router.navigate("/ralat-pelayan", { state: { ralat: res.data } }); break;
+      default:  break;
+    }
+    return Promise.reject(err);
+  }
+);
+```
+
+### Paparkan mesej ralat dari Laravel
+
+Laravel pulangkan JSON konsisten. Papar `message` kepada pengguna; tunjuk butiran teknikal (`exception`, `file`, `line`) **hanya dalam mod pembangunan**.
+
+```jsonc
+// Produksi (APP_DEBUG=false)
+{ "message": "Server Error" }
+
+// Pembangunan (APP_DEBUG=true)
+{ "message": "...", "exception": "...", "file": "app/...", "line": 42, "trace": [ /* … */ ] }
+```
+
+```jsx
+// src/views/ralat/RalatPelayan.jsx  (laluan /ralat-pelayan)
+import { useLocation } from "react-router-dom";
+
+export default function RalatPelayan() {
+  const ralat = useLocation().state?.ralat;
+  return (
+    <div className="container text-center py-5">
+      <h1 className="display-4">500 — Ralat Pelayan</h1>
+      <p className="text-muted">{ralat?.message ?? "Maaf, berlaku ralat tidak dijangka."}</p>
+
+      {/* Butiran teknikal Laravel — hanya semasa pembangunan */}
+      {import.meta.env.DEV && ralat?.exception && (
+        <pre className="text-start bg-light p-3 mt-4 small">
+          {ralat.exception} @ {ralat.file}:{ralat.line}
+        </pre>
+      )}
+    </div>
+  );
+}
+```
+
+### Halaman ralat khas + Error Boundary
+
+```
+src/views/ralat/
+├── Larangan.jsx          ← 403  (laluan /403)
+├── TidakDijumpai.jsx     ← 404  (laluan /404 dan catch-all "*")
+├── RalatPelayan.jsx      ← 500/503 (laluan /ralat-pelayan)
+└── RalatRangkaian.jsx    ← offline (laluan /ralat-rangkaian)
+```
+
+- Daftar laluan ralat ini dalam `router/index.jsx` (§9 sudah ada `/403` dan `*`).
+- Bungkus app dengan **React Error Boundary** untuk tangkap ralat *render* JS (bukan HTTP) → papar `RalatPelayan` sebagai fallback.
+- 422 **tidak** guna halaman khas — ralat validasi dipapar inline di borang dalam BM.
+
+---
+
 ## Cadangan Saya (tambahan)
 
 Bukan wajib, tapi disyorkan kuat untuk projek skala gov ini (5,000 pengguna serentak, handover ke RTM):
