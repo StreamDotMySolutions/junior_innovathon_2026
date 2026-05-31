@@ -146,6 +146,20 @@ Several proposal drafts produced under `docs/proposal-drafts/`:
 
 ---
 
+## 2026-05-31 — Added 5th role: `pelajar` (student)
+
+**Context:** User added a fifth RBAC role beyond the original four (Guru / Juri / Admin / Awam).
+
+**Decision:**
+- New role **`pelajar`** (student participant) — authenticated, role-gated like guru/juri/admin. Scope: view own team, submission status, schedule, certificate.
+- Propagated consistently across backend + frontend conventions and `CLAUDE.md`:
+  - Backend: role table, `routes/api/v1/pelajar.php` group (`role:pelajar`), `Controllers/Api/V1/Pelajar/`, folder summaries.
+  - Frontend: `layouts/pelajar/` (mobile + desktop), `views/pelajar/`, `api/pelajar/`, `router/routes/pelajar.jsx` + `/pelajar` prefix group with `ProtectedRoute role="pelajar"`.
+
+**Note:** Pelajar is mobile-first (students on phones). Exact permissions per role to be finalised at scaffolding; spec § mapping (§ 3.2.5 participant access) to confirm in URS.
+
+---
+
 ## Open questions for URS sessions with RTM
 
 These were flagged in earlier drafts and need resolution during URS sessions:

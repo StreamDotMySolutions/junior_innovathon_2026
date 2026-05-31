@@ -62,6 +62,9 @@ src/layouts/
 ├── guru/
 │   ├── GuruLayoutDesktop.jsx
 │   └── GuruLayoutMobile.jsx
+├── pelajar/
+│   ├── PelajarLayoutDesktop.jsx
+│   └── PelajarLayoutMobile.jsx
 ├── juri/
 │   ├── JuriLayoutDesktop.jsx
 │   └── JuriLayoutMobile.jsx
@@ -153,6 +156,9 @@ src/api/
 ├── guru/
 │   ├── pendaftaran.js
 │   └── pasukan.js
+├── pelajar/
+│   ├── pasukan.js
+│   └── sijil.js
 ├── juri/
 │   └── penjurian.js
 ├── admin/
@@ -240,6 +246,10 @@ src/views/
 │   ├── Pendaftaran.jsx
 │   ├── PasukanSenarai.jsx
 │   └── PasukanButiran.jsx
+├── pelajar/
+│   ├── Dashboard.jsx
+│   ├── PasukanSaya.jsx
+│   └── SijilSaya.jsx
 ├── juri/
 │   ├── SaringanZon.jsx
 │   └── PenjurianStudio.jsx
@@ -295,6 +305,7 @@ frontend/
     │   ├── ProtectedRoute.jsx     ← gate ikut role (cermin role middleware backend)
     │   └── routes/
     │       ├── guru.jsx
+    │       ├── pelajar.jsx
     │       ├── juri.jsx
     │       ├── admin.jsx
     │       └── awam.jsx
@@ -322,6 +333,7 @@ src/router/
 ├── ProtectedRoute.jsx     ← gate ikut role (cermin role middleware backend)
 └── routes/
     ├── guru.jsx           ← (cermin routes/api/v1/guru.php)
+    ├── pelajar.jsx
     ├── juri.jsx
     ├── admin.jsx
     └── awam.jsx
@@ -375,10 +387,12 @@ import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import AwamLayout  from "@/layouts/awam";
 import GuruLayout  from "@/layouts/guru";
+import PelajarLayout from "@/layouts/pelajar";
 import JuriLayout  from "@/layouts/juri";
 import AdminLayout from "@/layouts/admin";
 import awamRoutes  from "./routes/awam.jsx";
 import guruRoutes  from "./routes/guru.jsx";
+import pelajarRoutes from "./routes/pelajar.jsx";
 import juriRoutes  from "./routes/juri.jsx";
 import adminRoutes from "./routes/admin.jsx";
 
@@ -391,6 +405,11 @@ export const router = createBrowserRouter([
     path: "/guru",
     element: <ProtectedRoute role="guru"><GuruLayout /></ProtectedRoute>,
     children: guruRoutes,
+  },
+  {
+    path: "/pelajar",
+    element: <ProtectedRoute role="pelajar"><PelajarLayout /></ProtectedRoute>,
+    children: pelajarRoutes,
   },
   {
     path: "/juri",

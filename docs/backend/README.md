@@ -52,6 +52,8 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('guru')->middleware('role:guru')
             ->group(base_path('routes/api/v1/guru.php'));
+        Route::prefix('pelajar')->middleware('role:pelajar')
+            ->group(base_path('routes/api/v1/pelajar.php'));
         Route::prefix('juri')->middleware('role:juri')
             ->group(base_path('routes/api/v1/juri.php'));
         Route::prefix('admin')->middleware('role:admin')
@@ -66,11 +68,12 @@ Route::prefix('v1')->group(function () {
 
 Sistem menggunakan **[Spatie laravel-permission](https://spatie.be/docs/laravel-permission)** untuk Role-Based Access Control (RBAC). Akses ke setiap *route* dikawal berdasarkan **role** pengguna.
 
-### Empat role asas (§ 3.2)
+### Lima role asas (§ 3.2)
 
 | Role | Slug | Keterangan |
 |---|---|---|
 | Guru | `guru` | Pendaftar pasukan sekolah — urus penyertaan, peserta, muat naik bahan |
+| Pelajar | `pelajar` | Peserta pelajar — lihat pasukan sendiri, status penyertaan, jadual, sijil |
 | Juri | `juri` | Penjurian saringan zon + studio (markah real-time) |
 | Admin | `admin` | Pengurusan platform, kandungan CMS, laporan, pemantauan |
 | Awam | `awam` | Penonton portal awam — sijil, verifikasi |
@@ -219,6 +222,9 @@ app/Http/Controllers/
         │   ├── PendaftaranController.php
         │   ├── PasukanController.php
         │   └── PenyertaanController.php
+        ├── Pelajar/
+        │   ├── PasukanController.php
+        │   └── SijilController.php
         ├── Juri/
         │   ├── SaringanController.php
         │   └── PenjurianController.php
@@ -483,6 +489,7 @@ backend/
 │   │   ├── Controllers/
 │   │   │   └── Api/V1/                  ← lapisan HTTP diversi (§0)
 │   │   │       ├── Guru/
+│   │   │       ├── Pelajar/
 │   │   │       ├── Juri/
 │   │   │       ├── Admin/
 │   │   │       └── Awam/
@@ -505,6 +512,7 @@ backend/
 │   └── api/
 │       └── v1/
 │           ├── guru.php
+│           ├── pelajar.php
 │           ├── juri.php
 │           ├── admin.php
 │           └── awam.php

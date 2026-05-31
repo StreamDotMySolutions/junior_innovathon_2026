@@ -57,7 +57,7 @@ Plus `docs/NGeP-QT-Documents/` (procurement terms, sample letters) and `docs/Fin
 | Database | **MySQL 8** (on RDS Multi-AZ) | Mandated by tender |
 | Cache & queue | **Redis** (on ElastiCache Multi-AZ) | Our choice |
 | Auth | **Laravel Sanctum** SPA cookie session | Same-domain SPA pattern |
-| Roles | **Spatie laravel-permission** | 4 roles: Guru / Juri / Admin / Awam |
+| Roles | **Spatie laravel-permission** | 5 roles: Guru / Pelajar / Juri / Admin / Awam |
 | Real-time | Polling (MVP) → Reverb later | Cheaper for studio LED scoring |
 | AI chatbot | **OpenAI GPT-4o-mini** + RAG | User confirmed in earlier session |
 | Streaming | **nginx-rtmp on EC2** + ffmpeg HLS → S3 → CDN | Studio live + participant VOD |
@@ -74,6 +74,7 @@ Plus `docs/NGeP-QT-Documents/` (procurement terms, sample letters) and `docs/Fin
 ```
 Presentation Tier (React SPA on S3 + CloudFront)
   ├── Guru (teacher / submitter)
+  ├── Pelajar (student participant)
   ├── Juri (judge)
   ├── Admin
   └── Awam (public)
