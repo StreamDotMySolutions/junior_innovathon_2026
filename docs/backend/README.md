@@ -20,6 +20,45 @@ Dokumen ini menetapkan **konvensyen wajib** untuk pembinaan backend Laravel proj
 | 4 | **Validation berasingan** | Guna **Form Request** (form helper); folder validation ikut nama controller |
 | 5 | **JSON sahaja** | Controller **hanya** return JSON API response |
 | 6 | **Sanctum** | **Laravel Sanctum** sebagai tool utama autentikasi API |
+| 7 | **API versioning** | Semua endpoint diversi di bawah prefix `/api/v1/…`; lapisan HTTP (Controller, Request, Route) di-namespace `V1` |
+
+---
+
+## 0. API Versioning — `/api/v1/…`
+
+Semua endpoint API **wajib** berada di bawah prefix versi. Versi semasa ialah **`v1`**.
+
+```
+https://juniorinnovathon.rtm.gov.my/api/v1/guru/pendaftaran
+https://juniorinnovathon.rtm.gov.my/api/v1/juri/penjurian
+https://juniorinnovathon.rtm.gov.my/api/v1/admin/pengguna
+https://juniorinnovathon.rtm.gov.my/api/v1/awam/sijil/{kod}
+```
+
+**Prinsip:**
+- **Lapisan HTTP di-namespace ikut versi** — Controller, Form Request, dan Route fail diletak di bawah `V1`. Bila ada `v2` kelak, salin/cipta `V2` tanpa mengganggu pengguna `v1` sedia ada (§ 3.2.1 — "API versioning untuk perubahan tanpa mengganggu pengguna sedia ada").
+- **Service layer TIDAK diversi.** Business logic dikongsi merentas versi. `v1` dan `v2` controller boleh panggil Service yang sama; perbezaan versi diuruskan di Controller/Resource (bentuk input/output), bukan di Service.
+- **Model & migration TIDAK diversi** — satu sumber kebenaran data.
+- Prefix `v1` ditetapkan sekali di `routes/api.php`; tiada hardcode `v1` di dalam controller.
+
+```php
+// routes/api.php — root versioning
+Route::prefix('v1')->group(function () {
+    // Public — tiada auth
+    Route::prefix('awam')
+        ->group(base_path('routes/api/v1/awam.php'));
+
+    // Authenticated
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::prefix('guru')->middleware('role:guru')
+            ->group(base_path('routes/api/v1/guru.php'));
+        Route::prefix('juri')->middleware('role:juri')
+            ->group(base_path('routes/api/v1/juri.php'));
+        Route::prefix('admin')->middleware('role:admin')
+            ->group(base_path('routes/api/v1/admin.php'));
+    });
+});
+```
 
 ---
 
@@ -55,32 +94,15 @@ class User extends Authenticatable
 
 Route **mesti** dilindungi oleh middleware `role` (atau `permission`) Spatie. Setiap kumpulan route role berada dalam group berasingan.
 
+Lihat § 0 untuk contoh `routes/api.php` lengkap (versioning + role middleware). Setiap fail role berada di bawah `routes/api/v1/`:
+
 ```php
-// routes/api.php
+// routes/api/v1/guru.php
+use App\Http\Controllers\Api\V1\Guru\PendaftaranController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->group(function () {
-
-    // Public — tiada auth
-    Route::prefix('awam')
-        ->group(base_path('routes/api/awam.php'));
-
-    // Authenticated
-    Route::middleware('auth:sanctum')->group(function () {
-
-        Route::prefix('guru')
-            ->middleware('role:guru')
-            ->group(base_path('routes/api/guru.php'));
-
-        Route::prefix('juri')
-            ->middleware('role:juri')
-            ->group(base_path('routes/api/juri.php'));
-
-        Route::prefix('admin')
-            ->middleware('role:admin')
-            ->group(base_path('routes/api/admin.php'));
-    });
-});
+Route::post('pendaftaran', [PendaftaranController::class, 'store']);
+Route::get('pasukan',      [PasukanController::class, 'index']);
 ```
 
 - **Permission halus (granular)** dikawal dalam Service atau Policy, bukan di route — supaya SuperAdmin boleh ubah permission tanpa libatkan developer (§ 3.7).
@@ -94,26 +116,28 @@ Controller disusun dalam **subfolder mengikut role**. Ini memudahkan navigasi da
 
 ```
 app/Http/Controllers/
-├── Controller.php              ← base controller
-├── Guru/
-│   ├── PendaftaranController.php
-│   ├── PasukanController.php
-│   └── PenyertaanController.php
-├── Juri/
-│   ├── SaringanController.php
-│   └── PenjurianController.php
-├── Admin/
-│   ├── DashboardController.php
-│   ├── PenggunaController.php
-│   ├── CmsController.php
-│   └── LaporanController.php
-└── Awam/
-    ├── SijilController.php
-    └── VerifikasiController.php
+├── Controller.php                  ← base controller
+└── Api/
+    └── V1/                         ← versi API (§ 0)
+        ├── Guru/
+        │   ├── PendaftaranController.php
+        │   ├── PasukanController.php
+        │   └── PenyertaanController.php
+        ├── Juri/
+        │   ├── SaringanController.php
+        │   └── PenjurianController.php
+        ├── Admin/
+        │   ├── DashboardController.php
+        │   ├── PenggunaController.php
+        │   ├── CmsController.php
+        │   └── LaporanController.php
+        └── Awam/
+            ├── SijilController.php
+            └── VerifikasiController.php
 ```
 
 **Peraturan:**
-- Namespace mengikut folder: `App\Http\Controllers\Guru\PendaftaranController`.
+- Namespace mengikut folder: `App\Http\Controllers\Api\V1\Guru\PendaftaranController`.
 - Satu controller = satu resource/domain dalam konteks role tersebut.
 - Controller **nipis (thin)** — tiada query DB atau business logic terus.
 
@@ -142,11 +166,11 @@ app/Services/
 ### Contoh
 
 ```php
-// app/Http/Controllers/Guru/PendaftaranController.php
-namespace App\Http\Controllers\Guru;
+// app/Http/Controllers/Api/V1/Guru/PendaftaranController.php
+namespace App\Http\Controllers\Api\V1\Guru;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Guru\PendaftaranController\StoreRequest;
+use App\Http\Requests\Api\V1\Guru\PendaftaranController\StoreRequest;
 use App\Services\Pendaftaran\PendaftaranService;
 use Illuminate\Http\JsonResponse;
 
@@ -205,28 +229,30 @@ Validasi menggunakan **Laravel Form Request** (form helper). Setiap request clas
 
 ```
 app/Http/Requests/
-├── Guru/
-│   ├── PendaftaranController/
-│   │   ├── StoreRequest.php
-│   │   └── UpdateRequest.php
-│   └── PenyertaanController/
-│       └── StoreRequest.php
-├── Juri/
-│   └── PenjurianController/
-│       └── ScoreRequest.php
-└── Admin/
-    └── PenggunaController/
-        ├── StoreRequest.php
-        └── UpdateRequest.php
+└── Api/
+    └── V1/                              ← versi API (§ 0)
+        ├── Guru/
+        │   ├── PendaftaranController/
+        │   │   ├── StoreRequest.php
+        │   │   └── UpdateRequest.php
+        │   └── PenyertaanController/
+        │       └── StoreRequest.php
+        ├── Juri/
+        │   └── PenjurianController/
+        │       └── ScoreRequest.php
+        └── Admin/
+            └── PenggunaController/
+                ├── StoreRequest.php
+                └── UpdateRequest.php
 ```
 
-> Pola nama: `App\Http\Requests\{Role}\{ControllerName}\{Action}Request`
+> Pola nama: `App\Http\Requests\Api\V1\{Role}\{ControllerName}\{Action}Request`
 
 ### Contoh
 
 ```php
-// app/Http/Requests/Guru/PendaftaranController/StoreRequest.php
-namespace App\Http\Requests\Guru\PendaftaranController;
+// app/Http/Requests/Api/V1/Guru/PendaftaranController/StoreRequest.php
+namespace App\Http\Requests\Api\V1\Guru\PendaftaranController;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -296,7 +322,7 @@ Setiap controller method **mesti** return `JsonResponse`. **Tiada** view, redire
 - Guna **API Resource** (`JsonResource` / `ResourceCollection`) untuk bentuk output yang konsisten.
 - Kod status HTTP yang betul: `200`, `201`, `204`, `401`, `403`, `404`, `422`, `500`.
 - Force JSON: pastikan `Accept: application/json`, atau set exception handler render JSON untuk semua route `api`.
-- API versioned di bawah prefix `/api/v1/` (§ 3.2.1).
+- API versioned di bawah prefix `/api/v1/` (§ 0, § 3.2.1).
 
 ---
 
@@ -332,19 +358,19 @@ Route::middleware('auth:sanctum')->group(function () {
 ## Pemetaan Aliran Request (End-to-End)
 
 ```
-HTTP Request
+HTTP Request  →  /api/v1/{role}/…                                        (§0)
    │
    ▼
-routes/api/{role}.php   ──►  middleware: auth:sanctum + role:{role}   (§1, §6)
+routes/api/v1/{role}.php   ──►  middleware: auth:sanctum + role:{role}    (§1, §6)
    │
    ▼
-App\Http\Requests\{Role}\{Controller}\{Action}Request   ──►  validate   (§4)
+App\Http\Requests\Api\V1\{Role}\{Controller}\{Action}Request   ──►  validate   (§4)
    │
    ▼
-App\Http\Controllers\{Role}\{Controller}   ──►  thin, panggil service   (§2)
+App\Http\Controllers\Api\V1\{Role}\{Controller}   ──►  thin, panggil service   (§2)
    │
    ▼
-App\Services\{Domain}\{Service}   ──►  business logic, DB, integrasi   (§3)
+App\Services\{Domain}\{Service}   ──►  business logic, DB, integrasi  (§3, tidak diversi)
    │
    ▼
 App\Http\Resources\{Resource}   ──►  JsonResponse   (§5)
@@ -359,30 +385,33 @@ backend/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/
-│   │   │   ├── Guru/
-│   │   │   ├── Juri/
-│   │   │   ├── Admin/
-│   │   │   └── Awam/
+│   │   │   └── Api/V1/                  ← lapisan HTTP diversi (§0)
+│   │   │       ├── Guru/
+│   │   │       ├── Juri/
+│   │   │       ├── Admin/
+│   │   │       └── Awam/
 │   │   ├── Requests/
-│   │   │   ├── Guru/{ControllerName}/
-│   │   │   ├── Juri/{ControllerName}/
-│   │   │   ├── Admin/{ControllerName}/
-│   │   │   └── Awam/{ControllerName}/
+│   │   │   └── Api/V1/
+│   │   │       ├── Guru/{ControllerName}/
+│   │   │       ├── Juri/{ControllerName}/
+│   │   │       ├── Admin/{ControllerName}/
+│   │   │       └── Awam/{ControllerName}/
 │   │   ├── Resources/
 │   │   └── Middleware/
-│   ├── Services/
+│   ├── Services/                        ← TIDAK diversi (shared) (§3)
 │   │   ├── Pendaftaran/
 │   │   ├── Penjurian/
 │   │   ├── Sijil/
 │   │   └── Pengguna/
 │   └── Models/
 ├── routes/
-│   ├── api.php
+│   ├── api.php                          ← root: Route::prefix('v1')
 │   └── api/
-│       ├── guru.php
-│       ├── juri.php
-│       ├── admin.php
-│       └── awam.php
+│       └── v1/
+│           ├── guru.php
+│           ├── juri.php
+│           ├── admin.php
+│           └── awam.php
 ├── config/
 │   ├── sanctum.php
 │   └── permission.php
@@ -398,7 +427,7 @@ backend/
 
 | Konvensyen | Spec § |
 |---|---|
-| Pengasingan backend/frontend (API) | § 3.2.1 |
+| Pengasingan backend/frontend (API) + API versioning | § 3.2.1 |
 | RBAC pelbagai peranan | § 3.2, § 3.7 |
 | Penjurian (markah real-time) | § 3.6, § 3.6.4 |
 | Pendaftaran (lookup Pangkalan Data Sekolah) | § 3.2.5 |
