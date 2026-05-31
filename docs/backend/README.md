@@ -110,6 +110,102 @@ Route::get('pasukan',      [PasukanController::class, 'index']);
 
 ---
 
+## 1.1 Middleware — Susunan & Cadangan
+
+Middleware disusun dalam **3 lapisan**: global (semua `/api/v1`), kumpulan auth, dan per-route sensitif.
+
+### Lapisan 1 — Semua route `/api/v1/*`
+
+| Middleware | Jenis | Tujuan | Spec § |
+|---|---|---|---|
+| `HandleCors` | Laravel | Kawal asal (origin) yang dibenarkan — hanya domain SPA RTM | — |
+| `EnsureFrontendRequestsAreStateful` | Sanctum | Aktifkan auth cookie SPA untuk domain stateful | — |
+| `ForceJsonResponse` | **Custom** | Paksa `Accept: application/json` → semua ralat render JSON (§ 5) | § 3.2.1 |
+| `throttle:api` | Laravel | Rate limit asas — perlindungan DDoS / abuse | § 3.8.1 |
+| `SetLocale` | **Custom** | Set locale **BM** sebagai default untuk mesej | — |
+| `SubstituteBindings` | Laravel | Route-model binding | — |
+
+```php
+// bootstrap/app.php (Laravel 11+) — middleware group 'api'
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->api(prepend: [
+        \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+    ]);
+    $middleware->api(append: [
+        \App\Http\Middleware\ForceJsonResponse::class,
+        \App\Http\Middleware\SetLocale::class,
+    ]);
+    $middleware->throttleApi();                 // throttle:api
+
+    // alias Spatie
+    $middleware->alias([
+        'role'       => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+    ]);
+});
+```
+
+### Lapisan 2 — Kumpulan berautentikasi (per role)
+
+| Middleware | Tujuan |
+|---|---|
+| `auth:sanctum` | Sahkan pengguna (session SPA / token) — § 6 |
+| `role:{guru\|juri\|admin}` | Spatie — gate kasar ikut role — § 1 |
+| `verified` | (Pilihan) pastikan emel disahkan sebelum akses |
+
+```php
+// routes/api.php — sudah ditunjukkan di § 0
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('admin')->middleware('role:admin')
+        ->group(base_path('routes/api/v1/admin.php'));
+});
+```
+
+### Lapisan 3 — Per-route sensitif
+
+| Middleware | Guna pada | Tujuan | Spec § |
+|---|---|---|---|
+| `permission:{nama}` | Tindakan istimewa tertentu | Gate halus (cth. `permission:padam-pengguna`) | § 3.7 |
+| `AuditLog` | Semua tindakan tulis admin | Rekod audit trail (siapa, bila, apa) untuk RTM | § 3.7, § 3.14 |
+| `throttle:login` | Endpoint login | Anti brute-force (kadar lebih ketat) | § 3.8.1 |
+| `throttle:upload` | Muat naik video/slaid | Hadkan beban ingest besar | § 3.6 |
+
+```php
+// Contoh penggunaan per-route
+Route::delete('pengguna/{user}', [PenggunaController::class, 'destroy'])
+    ->middleware(['permission:padam-pengguna', 'audit']);
+```
+
+### Named rate limiters
+
+Tetapkan had berbeza ikut konteks dalam `App\Providers\AppServiceProvider` atau `bootstrap/app.php`:
+
+```php
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+
+RateLimiter::for('api', fn ($r) =>
+    Limit::perMinute(60)->by($r->user()?->id ?: $r->ip()));
+
+RateLimiter::for('login', fn ($r) =>
+    Limit::perMinute(5)->by($r->ip()));              // anti brute-force
+
+RateLimiter::for('upload', fn ($r) =>
+    Limit::perMinute(10)->by($r->user()?->id));
+```
+
+### Middleware custom yang perlu dibina
+
+| Kelas | Fungsi |
+|---|---|
+| `ForceJsonResponse` | Set header `Accept: application/json` supaya exception handler render JSON, bukan HTML — sokong konvensyen § 5 |
+| `SetLocale` | Set `app()->setLocale('ms')` (atau ikut header) untuk mesej BM |
+| `AuditLog` | Log tindakan tulis (method, route, user, payload ringkas, IP, masa) ke jadual `audit_logs` — bukti pematuhan untuk RTM (§ 3.7, § 3.14) |
+
+> **Keselamatan tambahan (§ 3.8.1):** SSL, WAF, dan perlindungan DDoS dikendalikan di lapisan **CloudFront + AWS WAF** (lihat `aws-architecture.md`), bukan middleware Laravel. Middleware aplikasi fokus pada auth, RBAC, throttle, dan audit.
+
+---
+
 ## 2. Controller — Folder Asing Ikut Nama Role
 
 Controller disusun dalam **subfolder mengikut role**. Ini memudahkan navigasi dan memetakan terus kepada struktur route di atas.
