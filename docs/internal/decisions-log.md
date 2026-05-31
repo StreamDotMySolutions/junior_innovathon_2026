@@ -99,6 +99,31 @@ Several proposal drafts produced under `docs/proposal-drafts/`:
 
 ---
 
+## 2026-05-31 — Backend design conventions locked
+
+**Context:** Defining the Laravel API backend conventions before scaffolding starts (post-SST). Documented under new `docs/backend/` folder.
+
+**Decisions:**
+1. **RBAC** — Spatie laravel-permission controls roles + route access. 4 roles: `guru`, `juri`, `admin`, `awam`. Guard `sanctum`.
+2. **Controllers grouped by role** — `app/Http/Controllers/Api/V1/{Guru,Juri,Admin,Awam}/`. Thin controllers only.
+3. **Service layer** — all business logic in `app/Services/{Domain}/`. Controllers call services; services are HTTP-agnostic.
+4. **Validation via Form Request** — folders named by controller: `app/Http/Requests/Api/V1/{Role}/{Controller}/{Action}Request`. BM validation messages.
+5. **JSON-only responses** — every controller method returns `JsonResponse`; API Resources for shaping.
+6. **Sanctum** — primary auth (SPA cookie session + tokens for integrations).
+7. **API versioning** — all endpoints under `/api/v1/`. HTTP layer (controllers, requests, routes) namespaced `V1`; **Service layer, Models, migrations NOT versioned** (shared) to avoid logic duplication across versions.
+8. **Testing = Pest 3.x** — Feature (endpoints) / Unit (services) / Arch (enforce conventions). DoD: ≥80% coverage gate in GitHub Actions CI. Arch tests turn the conventions above into automated checks.
+9. **Middleware (3 layers)** — global (`/api/v1`): Sanctum stateful + CORS + `ForceJsonResponse` + `SetLocale` + `throttle:api`; auth group: `auth:sanctum` + `role:*`; per-route: `permission:*`, `AuditLog`, tighter `throttle:login|upload`. SSL/WAF/DDoS handled at CloudFront/WAF, not app middleware (§ 3.8.1).
+
+**Rationale:** Consistent, auditable, easy to hand over to RTM (§ 3.14). Arch tests make conventions self-enforcing rather than documentation-only.
+
+**Artifacts:** `docs/backend/README.md` (conventions + middleware), `docs/backend/testing.md` (Pest).
+
+**Open within backend (minor):**
+- Test DB: SQLite in-memory (fast) + nightly MySQL 8 suite for real migration validation — proposed, not yet locked.
+- `SuperAdmin`: separate role vs `admin` + `*` permission — to decide at scaffolding.
+
+---
+
 ## Open questions for URS sessions with RTM
 
 These were flagged in earlier drafts and need resolution during URS sessions:

@@ -179,6 +179,7 @@ Headline decisions:
 8. Mobile app: **DROPPED** — responsive web only
 9. Streaming: nginx-rtmp on EC2 + HLS pipeline (in-house, not AWS MediaLive)
 10. Design hosting (mockups): pure AWS (S3 + CloudFront + Route 53) — Cloudflare not used yet
+11. Backend conventions (locked, see `docs/backend/`): Spatie RBAC · controllers grouped by role under `Api/V1/` · service layer (thin controllers) · Form Request validation foldered by controller · JSON-only responses · Sanctum auth · `/api/v1` versioning (HTTP layer only; services/models shared) · **Pest 3.x** tests with Arch enforcement · 3-layer middleware stack
 
 ## Working notes for Claude (across machines)
 
@@ -216,7 +217,10 @@ Headline decisions:
 │   │   ├── *.md                       ← 9 markdown proposal docs
 │   │   ├── design-proposals/          ← 9 HTML UI mockups + shared CSS
 │   │   └── design-proposals.zip       ← packaged zip artifact
+│   ├── backend/                       ← Laravel API design conventions
+│   │   ├── README.md                  ← RBAC, controllers, services, requests, JSON, Sanctum, /api/v1, middleware
+│   │   └── testing.md                 ← Pest 3.x testing conventions
 │   └── internal/
 │       └── decisions-log.md           ← chronological decisions
-└── (backend/ and frontend/ will appear when scaffolding starts post-SST)
+└── (backend/ and frontend/ code will appear when scaffolding starts post-SST)
 ```
