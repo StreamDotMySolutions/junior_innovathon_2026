@@ -232,6 +232,22 @@ Several proposal drafts produced under `docs/proposal-drafts/`:
 
 ---
 
+## 2026-05-31 — Domain model: Event → Team → Project
+
+**Context:** Clarified the competition entity model. Admin creates Events; Mentors register a Team into an Event and create a Project.
+
+**Decisions:**
+1. **Event** (new) — Admin-managed entity (`events` table: name, year, dates, status). A competition instance.
+2. **Team** — kept. `belongsTo` **exactly one** Event (`teams.event_id`, not nullable). Mentor & Participants are bound to a single Team — **cannot join another Team** (enforced in Service).
+3. **Project** (new) — Mentor-created, **`hasOne` per Team** (`projects.team_id` unique). Splits the legacy `teams` row which mixed `teamname` + `project_name`.
+4. **Materials & scores move to Project** — Video, Slide, Score now reference `project_id` (not `team_id`); `JudgingSession.active_project_id`. The Project is the judged artefact.
+5. **Rule "1 team = 1 event = 1 project"** enforced by schema (`event_id` required, `team_id` unique on projects) + Service checks.
+6. New controllers/services: `Admin/EventController` + `EventService`; `Mentor/ProjekController` + `ProjectService`.
+
+**Artifacts:** `docs/backend/schema.md`, `docs/backend/README.md`, `CLAUDE.md`.
+
+---
+
 ## Open questions for URS sessions with RTM
 
 These were flagged in earlier drafts and need resolution during URS sessions:

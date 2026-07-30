@@ -132,7 +132,7 @@ aws cloudfront create-invalidation --distribution-id ETTFYVJNQE52L --paths "/*" 
 | # | Module | Spec § | Key points |
 |---|---|---|---|
 | 1 | CMS | 3.2 | Custom-built, branded as **StreamDotMy CMS** |
-| 2 | Pendaftaran | 3.2.5 | Pangkalan Data Sekolah lookup; 3-min video + 5 slides per team |
+| 2 | Pendaftaran | 3.2.5 | Admin creates Event; Mentor registers Team (1 Event) + creates Project (1/team); Pangkalan Data Sekolah lookup; 3-min video + 5 slides per Project |
 | 3 | Saringan | 3.6 | 5 zones; vendor supplies 5 laptops; ~3.5 months |
 | 4 | Penjurian Studio | 3.6.4 | 6 live episodes; real-time LED scoring; 12 Sep – 1 Nov |
 | 5 | Sijil Digital | 3.2.5(c) | PDF + QR verification |

@@ -228,7 +228,8 @@ app/Http/Controllers/
     └── V1/                         ← versi API (§ 0)
         ├── Mentor/
         │   ├── PendaftaranController.php
-        │   ├── PasukanController.php
+        │   ├── PasukanController.php       ← Team (sertai 1 Event)
+        │   ├── ProjekController.php        ← cipta/urus Project (1 per Team)
         │   └── PenyertaanController.php
         ├── Participant/
         │   ├── PasukanController.php
@@ -243,6 +244,7 @@ app/Http/Controllers/
         │   └── ScoreboardController.php
         ├── Admin/
         │   ├── DashboardController.php
+        │   ├── EventController.php         ← Admin cipta/urus Event
         │   ├── PenggunaController.php
         │   ├── CmsController.php
         │   └── LaporanController.php
@@ -267,8 +269,11 @@ app/Http/Controllers/
 
 ```
 app/Services/
+├── Event/
+│   └── EventService.php            ← Admin: cipta/urus Event
 ├── Pendaftaran/
-│   └── PendaftaranService.php
+│   ├── PendaftaranService.php      ← Team (1 Event; kuatkuasa peserta terikat)
+│   └── ProjectService.php          ← Mentor: cipta Project (1 per Team)
 ├── Penjurian/
 │   ├── SaringanService.php
 │   └── StudioScoringService.php
