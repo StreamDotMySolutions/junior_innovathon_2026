@@ -248,6 +248,21 @@ Several proposal drafts produced under `docs/proposal-drafts/`:
 
 ---
 
+## 2026-05-31 — Full registration flow designed
+
+**Context:** Designed the end-to-end registration flow on top of the Event→Team→Project model.
+
+**Highlights (see `docs/backend/registration-flow.md`):**
+- Sequence: Admin opens Event → Mentor registers Team → adds ≤3 Participants (age-gated) → creates Project → uploads video (3-min) + slides (≤5) via **S3 pre-signed multipart** → submits → Admin verify (approve/reject).
+- **Age gate** reuses legacy `categories.icstart..iclast` (IC birth-date range per category) — auto-rejects out-of-range participants.
+- **State machines:** Project `DRAFT→SUBMITTED→VERIFIED` (reject loops back); Team `verify_status` `DRAFT→PENDING→APPROVED/REJECTED` → feeds Saringan (§3.6).
+- All guards in Service layer (1-Mentor-1-Team, 1-Team-1-Project, bound participants) + DB constraints. Uploads idempotent; verify actions audited (§3.14).
+- Full endpoint table + Form Request validation rules (BM messages).
+
+**Artifact:** `docs/backend/registration-flow.md`.
+
+---
+
 ## Open questions for URS sessions with RTM
 
 These were flagged in earlier drafts and need resolution during URS sessions:

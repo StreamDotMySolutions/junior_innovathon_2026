@@ -225,6 +225,7 @@ Headline decisions:
 │   ├── backend/                       ← Laravel API design conventions
 │   │   ├── README.md                  ← RBAC, controllers, services, requests, JSON, Sanctum, /api/v1, middleware
 │   │   ├── schema.md                  ← DB schema + Eloquent relationships (English names)
+│   │   ├── registration-flow.md       ← full Event→Team→Project→verify flow + state machines
 │   │   └── testing.md                 ← Pest 3.x testing conventions
 │   ├── frontend/                      ← ReactJS (JS/JSX) design conventions
 │   │   └── README.md                  ← Bootstrap 5, role layouts, mobile/desktop split, Axios, env, Laravel naming, routing, auth, errors
