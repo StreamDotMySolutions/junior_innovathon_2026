@@ -79,11 +79,11 @@ Uji ikut konsep dari `README.md`: auth Sanctum, role middleware, Form Request, J
 use App\Models\User;
 use function Pest\Laravel\{postJson, actingAs};
 
-it('membenarkan guru mendaftar pasukan', function () {
-    $guru = User::factory()->create()->assignRole('guru');
+it('membenarkan mentor mendaftar pasukan', function () {
+    $mentor = User::factory()->create()->assignRole('mentor');
 
-    actingAs($guru)
-        ->postJson('/api/v1/guru/pendaftaran', [
+    actingAs($mentor)
+        ->postJson('/api/v1/mentor/pendaftaran', [
             'nama_pasukan' => 'Pasukan Cendekia',
             'kod_sekolah'  => 'JEA1234',
             'video_url'    => 'https://s3…/video.mp4',
@@ -94,10 +94,10 @@ it('membenarkan guru mendaftar pasukan', function () {
 });
 
 it('menolak validasi tidak lengkap dengan 422', function () {
-    $guru = User::factory()->create()->assignRole('guru');
+    $mentor = User::factory()->create()->assignRole('mentor');
 
-    actingAs($guru)
-        ->postJson('/api/v1/guru/pendaftaran', [])
+    actingAs($mentor)
+        ->postJson('/api/v1/mentor/pendaftaran', [])
         ->assertUnprocessable()                       // HTTP 422
         ->assertJsonValidationErrors(['nama_pasukan', 'kod_sekolah']);
 });
@@ -117,7 +117,7 @@ it('menguatkuasa akses role pada endpoint terlindung', function (string $role, i
         ->assertStatus($status);
 })->with([
     'admin diterima' => ['admin', 200],
-    'guru ditolak'   => ['guru', 403],
+    'mentor ditolak' => ['mentor', 403],
     'juri ditolak'   => ['juri', 403],
 ]);
 
@@ -137,16 +137,16 @@ Service diuji tanpa HTTP — sahkan business logic, transaksi, dan integrasi (mo
 use App\Models\User;
 use App\Services\Pendaftaran\PendaftaranService;
 
-it('mencipta pasukan dan mengaitkan dengan guru', function () {
-    $guru    = User::factory()->create();
+it('mencipta pasukan dan mengaitkan dengan mentor', function () {
+    $mentor    = User::factory()->create();
     $service = app(PendaftaranService::class);
 
-    $pasukan = $service->daftarPasukan($guru, [
+    $pasukan = $service->daftarPasukan($mentor, [
         'nama_pasukan' => 'Pasukan Cendekia',
         'kod_sekolah'  => 'JEA1234',
     ]);
 
-    expect($pasukan->guru_id)->toBe($guru->id)
+    expect($pasukan->mentor_id)->toBe($mentor->id)
         ->and($pasukan->nama_pasukan)->toBe('Pasukan Cendekia');
 });
 ```

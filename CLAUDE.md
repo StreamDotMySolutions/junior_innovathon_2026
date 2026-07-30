@@ -58,7 +58,7 @@ Plus `docs/NGeP-QT-Documents/` (procurement terms, sample letters) and `docs/Fin
 | Database | **MySQL 8** (on RDS Multi-AZ) | Mandated by tender |
 | Cache & queue | **Redis** (on ElastiCache Multi-AZ) | Our choice |
 | Auth | **Laravel Sanctum** SPA cookie session | Same-domain SPA pattern |
-| Roles | **Spatie laravel-permission** | 5 roles: Guru / Pelajar / Juri / Admin / Awam |
+| Roles | **Spatie laravel-permission** | 5 roles: Mentor / Participant / Juri / Admin / Awam |
 | Real-time | Polling (MVP) → Reverb later | Cheaper for studio LED scoring |
 | AI chatbot | **OpenAI GPT-4o-mini** + RAG | User confirmed in earlier session |
 | Streaming | **nginx-rtmp on EC2** + ffmpeg HLS → S3 → CDN | Studio live + participant VOD |
@@ -74,8 +74,8 @@ Plus `docs/NGeP-QT-Documents/` (procurement terms, sample letters) and `docs/Fin
 
 ```
 Presentation Tier (React SPA on S3 + CloudFront)
-  ├── Guru (teacher / submitter)
-  ├── Pelajar (student participant)
+  ├── Mentor (teacher / submitter)
+  ├── Participant (student participant)
   ├── Juri (judge)
   ├── Admin
   └── Awam (public)
@@ -222,6 +222,7 @@ Headline decisions:
 │   │   └── design-proposals.zip       ← packaged zip artifact
 │   ├── backend/                       ← Laravel API design conventions
 │   │   ├── README.md                  ← RBAC, controllers, services, requests, JSON, Sanctum, /api/v1, middleware
+│   │   ├── schema.md                  ← DB schema + Eloquent relationships (English names)
 │   │   └── testing.md                 ← Pest 3.x testing conventions
 │   ├── frontend/                      ← ReactJS (JS/JSX) design conventions
 │   │   └── README.md                  ← Bootstrap 5, role layouts, mobile/desktop split, Axios, env, Laravel naming, routing, auth, errors

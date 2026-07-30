@@ -29,7 +29,7 @@ Dokumen ini menetapkan **konvensyen wajib** untuk pembinaan backend Laravel proj
 Semua endpoint API **wajib** berada di bawah prefix versi. Versi semasa ialah **`v1`**.
 
 ```
-https://juniorinnovathon.rtm.gov.my/api/v1/guru/pendaftaran
+https://juniorinnovathon.rtm.gov.my/api/v1/mentor/pendaftaran
 https://juniorinnovathon.rtm.gov.my/api/v1/juri/penjurian
 https://juniorinnovathon.rtm.gov.my/api/v1/admin/pengguna
 https://juniorinnovathon.rtm.gov.my/api/v1/awam/sijil/{kod}
@@ -50,10 +50,10 @@ Route::prefix('v1')->group(function () {
 
     // Authenticated
     Route::middleware('auth:sanctum')->group(function () {
-        Route::prefix('guru')->middleware('role:guru')
-            ->group(base_path('routes/api/v1/guru.php'));
-        Route::prefix('pelajar')->middleware('role:pelajar')
-            ->group(base_path('routes/api/v1/pelajar.php'));
+        Route::prefix('mentor')->middleware('role:mentor')
+            ->group(base_path('routes/api/v1/mentor.php'));
+        Route::prefix('participant')->middleware('role:participant')
+            ->group(base_path('routes/api/v1/participant.php'));
         Route::prefix('juri')->middleware('role:juri')
             ->group(base_path('routes/api/v1/juri.php'));
         Route::prefix('admin')->middleware('role:admin')
@@ -72,8 +72,8 @@ Sistem menggunakan **[Spatie laravel-permission](https://spatie.be/docs/laravel-
 
 | Role | Slug | Keterangan |
 |---|---|---|
-| Guru | `guru` | Pendaftar pasukan sekolah — urus penyertaan, peserta, muat naik bahan |
-| Pelajar | `pelajar` | Peserta pelajar — lihat pasukan sendiri, status penyertaan, jadual, sijil |
+| Mentor | `mentor` | Guru pembimbing — daftar & urus pasukan sekolah, peserta, muat naik bahan |
+| Participant | `participant` | Pelajar peserta — lihat pasukan sendiri, status penyertaan, jadual, sijil |
 | Juri | `juri` | Penjurian saringan zon + studio (markah real-time) |
 | Admin | `admin` | Pengurusan platform, kandungan CMS, laporan, pemantauan |
 | Awam | `awam` | Penonton portal awam — sijil, verifikasi |
@@ -100,8 +100,8 @@ Route **mesti** dilindungi oleh middleware `role` (atau `permission`) Spatie. Se
 Lihat § 0 untuk contoh `routes/api.php` lengkap (versioning + role middleware). Setiap fail role berada di bawah `routes/api/v1/`:
 
 ```php
-// routes/api/v1/guru.php
-use App\Http\Controllers\Api\V1\Guru\PendaftaranController;
+// routes/api/v1/mentor.php
+use App\Http\Controllers\Api\V1\Mentor\PendaftaranController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('pendaftaran', [PendaftaranController::class, 'store']);
@@ -153,7 +153,7 @@ Middleware disusun dalam **3 lapisan**: global (semua `/api/v1`), kumpulan auth,
 | Middleware | Tujuan |
 |---|---|
 | `auth:sanctum` | Sahkan pengguna (session SPA / token) — § 6 |
-| `role:{guru\|juri\|admin}` | Spatie — gate kasar ikut role — § 1 |
+| `role:{mentor\|juri\|admin}` | Spatie — gate kasar ikut role — § 1 |
 | `verified` | (Pilihan) pastikan emel disahkan sebelum akses |
 
 ```php
@@ -218,11 +218,11 @@ app/Http/Controllers/
 ├── Controller.php                  ← base controller
 └── Api/
     └── V1/                         ← versi API (§ 0)
-        ├── Guru/
+        ├── Mentor/
         │   ├── PendaftaranController.php
         │   ├── PasukanController.php
         │   └── PenyertaanController.php
-        ├── Pelajar/
+        ├── Participant/
         │   ├── PasukanController.php
         │   └── SijilController.php
         ├── Juri/
@@ -239,7 +239,7 @@ app/Http/Controllers/
 ```
 
 **Peraturan:**
-- Namespace mengikut folder: `App\Http\Controllers\Api\V1\Guru\PendaftaranController`.
+- Namespace mengikut folder: `App\Http\Controllers\Api\V1\Mentor\PendaftaranController`.
 - Satu controller = satu resource/domain dalam konteks role tersebut.
 - Controller **nipis (thin)** — tiada query DB atau business logic terus.
 
@@ -268,11 +268,11 @@ app/Services/
 ### Contoh
 
 ```php
-// app/Http/Controllers/Api/V1/Guru/PendaftaranController.php
-namespace App\Http\Controllers\Api\V1\Guru;
+// app/Http/Controllers/Api/V1/Mentor/PendaftaranController.php
+namespace App\Http\Controllers\Api\V1\Mentor;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\V1\Guru\PendaftaranController\StoreRequest;
+use App\Http\Requests\Api\V1\Mentor\PendaftaranController\StoreRequest;
 use App\Services\Pendaftaran\PendaftaranService;
 use Illuminate\Http\JsonResponse;
 
@@ -306,11 +306,11 @@ use App\Models\User;
 
 class PendaftaranService
 {
-    public function daftarPasukan(User $guru, array $data): Pasukan
+    public function daftarPasukan(User $mentor, array $data): Pasukan
     {
         // ── business logic, transaction, event, dsb di sini ──
-        return DB::transaction(function () use ($guru, $data) {
-            $pasukan = $guru->pasukan()->create($data);
+        return DB::transaction(function () use ($mentor, $data) {
+            $pasukan = $mentor->pasukan()->create($data);
             // ... lookup Pangkalan Data Sekolah, hantar notifikasi, dll.
             return $pasukan;
         });
@@ -333,7 +333,7 @@ Validasi menggunakan **Laravel Form Request** (form helper). Setiap request clas
 app/Http/Requests/
 └── Api/
     └── V1/                              ← versi API (§ 0)
-        ├── Guru/
+        ├── Mentor/
         │   ├── PendaftaranController/
         │   │   ├── StoreRequest.php
         │   │   └── UpdateRequest.php
@@ -353,8 +353,8 @@ app/Http/Requests/
 ### Contoh
 
 ```php
-// app/Http/Requests/Api/V1/Guru/PendaftaranController/StoreRequest.php
-namespace App\Http\Requests\Api\V1\Guru\PendaftaranController;
+// app/Http/Requests/Api/V1/Mentor/PendaftaranController/StoreRequest.php
+namespace App\Http\Requests\Api\V1\Mentor\PendaftaranController;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -432,14 +432,14 @@ Setiap controller method **mesti** return `JsonResponse`. **Tiada** view, redire
 
 **Laravel Sanctum** adalah tool autentikasi utama API.
 
-- **Mod SPA cookie session** untuk frontend React (same-domain) — CSRF-protected, sesuai untuk portal Guru/Juri/Admin.
+- **Mod SPA cookie session** untuk frontend React (same-domain) — CSRF-protected, sesuai untuk portal Mentor/Juri/Admin.
 - **Personal access token** untuk integrasi/perkhidmatan (cth. chatbot, kiosk) jika perlu.
 - Guard `sanctum` diselaraskan dengan Spatie (`guard_name` = `sanctum`).
 
 ```php
 // Route auth dilindungi
 Route::middleware('auth:sanctum')->group(function () {
-    // … guru / juri / admin
+    // … mentor / juri / admin
 });
 ```
 
@@ -488,14 +488,14 @@ backend/
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   └── Api/V1/                  ← lapisan HTTP diversi (§0)
-│   │   │       ├── Guru/
-│   │   │       ├── Pelajar/
+│   │   │       ├── Mentor/
+│   │   │       ├── Participant/
 │   │   │       ├── Juri/
 │   │   │       ├── Admin/
 │   │   │       └── Awam/
 │   │   ├── Requests/
 │   │   │   └── Api/V1/
-│   │   │       ├── Guru/{ControllerName}/
+│   │   │       ├── Mentor/{ControllerName}/
 │   │   │       ├── Juri/{ControllerName}/
 │   │   │       ├── Admin/{ControllerName}/
 │   │   │       └── Awam/{ControllerName}/
@@ -511,8 +511,8 @@ backend/
 │   ├── api.php                          ← root: Route::prefix('v1')
 │   └── api/
 │       └── v1/
-│           ├── guru.php
-│           ├── pelajar.php
+│           ├── mentor.php
+│           ├── participant.php
 │           ├── juri.php
 │           ├── admin.php
 │           └── awam.php

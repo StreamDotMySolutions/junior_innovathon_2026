@@ -112,7 +112,7 @@ server { listen 80; server_name juniorinnovathon.rtm.gov.my; return 301 https://
 ```
 
 **Nota penting:**
-- `try_files ... /index.html` pada SPA → tanpa ini, refresh pada `/guru/pasukan` akan 404 (server tiada fail itu; React Router yang handle).
+- `try_files ... /index.html` pada SPA → tanpa ini, refresh pada `/mentor/pasukan` akan 404 (server tiada fail itu; React Router yang handle).
 - `location ^~ /api/` didahulukan supaya tidak jatuh ke SPA fallback.
 - `REQUEST_URI $request_uri` memastikan Laravel nampak `/api/v1/...` penuh.
 

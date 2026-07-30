@@ -18,7 +18,7 @@ Dokumen ini menetapkan **konvensyen wajib** untuk frontend ReactJS. Pasangan kep
 |---|---|---|
 | 1 | **ReactJS (JS sahaja)** | React 18 + Vite + JSX. **Tiada TypeScript.** |
 | 2 | **Bootstrap 5** | CSS framework — diimport via SCSS untuk tema RTM |
-| 3 | **Layout ikut role** | Layout berbeza untuk Guru / Juri / Admin / Awam |
+| 3 | **Layout ikut role** | Layout berbeza untuk Mentor / Juri / Admin / Awam |
 | 4 | **Mobile vs Desktop berasingan** | Setiap role ada fail layout mobile & desktop yang berasingan |
 | 5 | **Axios** | Satu instance terpusat untuk semua panggilan API |
 | 6 | **Env config** | Semua konfigurasi dalam `.env` (Vite `VITE_*`) |
@@ -59,12 +59,12 @@ Setiap role ada layoutnya sendiri, dan **setiap layout dipecah kepada fail mobil
 ```
 src/layouts/
 ├── ResponsiveLayout.jsx          ← resolver: pilih Mobile/Desktop ikut breakpoint
-├── guru/
-│   ├── GuruLayoutDesktop.jsx
-│   └── GuruLayoutMobile.jsx
-├── pelajar/
-│   ├── PelajarLayoutDesktop.jsx
-│   └── PelajarLayoutMobile.jsx
+├── mentor/
+│   ├── MentorLayoutDesktop.jsx
+│   └── MentorLayoutMobile.jsx
+├── participant/
+│   ├── ParticipantLayoutDesktop.jsx
+│   └── ParticipantLayoutMobile.jsx
 ├── juri/
 │   ├── JuriLayoutDesktop.jsx
 │   └── JuriLayoutMobile.jsx
@@ -94,22 +94,22 @@ export function useIsMobile(maxWidth = 992) {
 ```
 
 ```jsx
-// src/layouts/guru/index.jsx — resolver untuk role Guru
+// src/layouts/mentor/index.jsx — resolver untuk role Mentor
 import { useIsMobile } from "@/hooks/useBreakpoint";
-import GuruLayoutDesktop from "./GuruLayoutDesktop.jsx";
-import GuruLayoutMobile from "./GuruLayoutMobile.jsx";
+import MentorLayoutDesktop from "./MentorLayoutDesktop.jsx";
+import MentorLayoutMobile from "./MentorLayoutMobile.jsx";
 
-export default function GuruLayout(props) {
+export default function MentorLayout(props) {
   return useIsMobile()
-    ? <GuruLayoutMobile {...props} />
-    : <GuruLayoutDesktop {...props} />;
+    ? <MentorLayoutMobile {...props} />
+    : <MentorLayoutDesktop {...props} />;
 }
 ```
 
 **Peraturan:**
 - Fail mobile mengandungi navigasi mudah alih (offcanvas / bottom nav); desktop guna sidebar penuh.
 - Layout role dikaitkan dengan route melalui `ProtectedRoute` (§ 8 / router).
-- Juri studio (tablet) dan Guru (telefon) adalah kes utama mobile — § scale targets.
+- Juri studio (tablet) dan Mentor (telefon) adalah kes utama mobile — § scale targets.
 
 ---
 
@@ -153,10 +153,10 @@ Modul API **dikumpul ikut role/resource** — mencerminkan struktur controller b
 src/api/
 ├── http.js
 ├── auth.js                       ← login, logout, me
-├── guru/
+├── mentor/
 │   ├── pendaftaran.js
 │   └── pasukan.js
-├── pelajar/
+├── participant/
 │   ├── pasukan.js
 │   └── sijil.js
 ├── juri/
@@ -168,11 +168,11 @@ src/api/
 ```
 
 ```js
-// src/api/guru/pendaftaran.js
+// src/api/mentor/pendaftaran.js
 import http from "@/api/http";
 
-export const daftarPasukan = (data) => http.post("/guru/pendaftaran", data);
-export const senaraiPasukan = () => http.get("/guru/pasukan");
+export const daftarPasukan = (data) => http.post("/mentor/pendaftaran", data);
+export const senaraiPasukan = () => http.get("/mentor/pasukan");
 ```
 
 **Peraturan:**
@@ -224,8 +224,8 @@ Pemetaan konvensyen Laravel → React (JS):
 
 | Perkara | Konvensyen Laravel | Terjemahan React (projek ini) | Contoh |
 |---|---|---|---|
-| Kelas (Controller/Model) | **StudlyCase** | Komponen & Layout → **PascalCase** `.jsx` | `GuruLayoutDesktop.jsx`, `Pendaftaran.jsx` |
-| Folder views | **snake_case**, ikut domain | Folder `views/` & `layouts/` ikut **role** (huruf kecil) | `views/guru/`, `layouts/juri/` |
+| Kelas (Controller/Model) | **StudlyCase** | Komponen & Layout → **PascalCase** `.jsx` | `MentorLayoutDesktop.jsx`, `Pendaftaran.jsx` |
+| Folder views | **snake_case**, ikut domain | Folder `views/` & `layouts/` ikut **role** (huruf kecil) | `views/mentor/`, `layouts/juri/` |
 | Method / fungsi | **camelCase** | Fungsi & hooks → **camelCase** | `daftarPasukan()`, `useIsMobile()` |
 | Fail bukan-kelas (helpers) | huruf kecil | Modul utiliti → huruf kecil `.js` | `http.js`, `pendaftaran.js`, `format.js` |
 | Route / URL | **kebab-case** | Path React Router → **kebab-case** | `/juri/penjurian-studio` |
@@ -242,11 +242,11 @@ Seperti Laravel mengumpul Blade dalam `resources/views/{domain}/`, React mengump
 
 ```
 src/views/
-├── guru/
+├── mentor/
 │   ├── Pendaftaran.jsx
 │   ├── PasukanSenarai.jsx
 │   └── PasukanButiran.jsx
-├── pelajar/
+├── participant/
 │   ├── Dashboard.jsx
 │   ├── PasukanSaya.jsx
 │   └── SijilSaya.jsx
@@ -304,8 +304,8 @@ frontend/
     │   ├── index.jsx              ← gabung semua fail route (cermin routes/api.php)
     │   ├── ProtectedRoute.jsx     ← gate ikut role (cermin role middleware backend)
     │   └── routes/
-    │       ├── guru.jsx
-    │       ├── pelajar.jsx
+    │       ├── mentor.jsx
+    │       ├── participant.jsx
     │       ├── juri.jsx
     │       ├── admin.jsx
     │       └── awam.jsx
@@ -332,8 +332,8 @@ src/router/
 ├── index.jsx              ← gabung semua + prefix role + gate  (cermin routes/api.php)
 ├── ProtectedRoute.jsx     ← gate ikut role (cermin role middleware backend)
 └── routes/
-    ├── guru.jsx           ← (cermin routes/api/v1/guru.php)
-    ├── pelajar.jsx
+    ├── mentor.jsx           ← (cermin routes/api/v1/mentor.php)
+    ├── participant.jsx
     ├── juri.jsx
     ├── admin.jsx
     └── awam.jsx
@@ -345,10 +345,10 @@ URL frontend memetakan corak URI resourceful Laravel. Prefix role, kebab-case, p
 
 | Tujuan | Laravel URI | Path React Router | View |
 |---|---|---|---|
-| Senarai | `GET /guru/pasukan` | `/guru/pasukan` | `views/guru/PasukanSenarai.jsx` |
-| Borang cipta | `GET /guru/pasukan/create` | `/guru/pasukan/create` | `PasukanCipta.jsx` |
-| Butiran (show) | `GET /guru/pasukan/{pasukan}` | `/guru/pasukan/:pasukan` | `PasukanButiran.jsx` |
-| Borang edit | `GET /guru/pasukan/{pasukan}/edit` | `/guru/pasukan/:pasukan/edit` | `PasukanEdit.jsx` |
+| Senarai | `GET /mentor/pasukan` | `/mentor/pasukan` | `views/mentor/PasukanSenarai.jsx` |
+| Borang cipta | `GET /mentor/pasukan/create` | `/mentor/pasukan/create` | `PasukanCipta.jsx` |
+| Butiran (show) | `GET /mentor/pasukan/{pasukan}` | `/mentor/pasukan/:pasukan` | `PasukanButiran.jsx` |
+| Borang edit | `GET /mentor/pasukan/{pasukan}/edit` | `/mentor/pasukan/:pasukan/edit` | `PasukanEdit.jsx` |
 | Tindakan khas | — | `/juri/penjurian-studio` | `PenjurianStudio.jsx` |
 
 > Nota: SPA hanya ada navigasi jenis-GET; `store`/`update`/`destroy` (POST/PUT/DELETE) dibuat melalui modul Axios (§5). Tapi **corak URI dikekalkan** supaya selari dengan backend.
@@ -358,19 +358,19 @@ URL frontend memetakan corak URI resourceful Laravel. Prefix role, kebab-case, p
 Setiap fail mengeksport array *route object* (path relatif) — seperti satu fail route Laravel mengisi satu prefix group. Guna `React.lazy` untuk code-splitting ikut role.
 
 ```jsx
-// src/router/routes/guru.jsx   (cermin routes/api/v1/guru.php)
+// src/router/routes/mentor.jsx   (cermin routes/api/v1/mentor.php)
 import { lazy } from "react";
 
-const GuruDashboard   = lazy(() => import("@/views/guru/Dashboard.jsx"));
-const Pendaftaran     = lazy(() => import("@/views/guru/Pendaftaran.jsx"));
-const PasukanSenarai  = lazy(() => import("@/views/guru/PasukanSenarai.jsx"));
-const PasukanCipta    = lazy(() => import("@/views/guru/PasukanCipta.jsx"));
-const PasukanButiran  = lazy(() => import("@/views/guru/PasukanButiran.jsx"));
-const PasukanEdit     = lazy(() => import("@/views/guru/PasukanEdit.jsx"));
+const MentorDashboard   = lazy(() => import("@/views/mentor/Dashboard.jsx"));
+const Pendaftaran     = lazy(() => import("@/views/mentor/Pendaftaran.jsx"));
+const PasukanSenarai  = lazy(() => import("@/views/mentor/PasukanSenarai.jsx"));
+const PasukanCipta    = lazy(() => import("@/views/mentor/PasukanCipta.jsx"));
+const PasukanButiran  = lazy(() => import("@/views/mentor/PasukanButiran.jsx"));
+const PasukanEdit     = lazy(() => import("@/views/mentor/PasukanEdit.jsx"));
 
-// path relatif kepada prefix "/guru" (ditetapkan di index.jsx)
+// path relatif kepada prefix "/mentor" (ditetapkan di index.jsx)
 export default [
-  { index: true,                       element: <GuruDashboard /> },
+  { index: true,                       element: <MentorDashboard /> },
   { path: "pendaftaran",               element: <Pendaftaran /> },
   { path: "pasukan",                   element: <PasukanSenarai /> },
   { path: "pasukan/create",            element: <PasukanCipta /> },
@@ -386,13 +386,13 @@ export default [
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import AwamLayout  from "@/layouts/awam";
-import GuruLayout  from "@/layouts/guru";
-import PelajarLayout from "@/layouts/pelajar";
+import MentorLayout  from "@/layouts/mentor";
+import ParticipantLayout from "@/layouts/participant";
 import JuriLayout  from "@/layouts/juri";
 import AdminLayout from "@/layouts/admin";
 import awamRoutes  from "./routes/awam.jsx";
-import guruRoutes  from "./routes/guru.jsx";
-import pelajarRoutes from "./routes/pelajar.jsx";
+import mentorRoutes  from "./routes/mentor.jsx";
+import participantRoutes from "./routes/participant.jsx";
 import juriRoutes  from "./routes/juri.jsx";
 import adminRoutes from "./routes/admin.jsx";
 
@@ -400,16 +400,16 @@ export const router = createBrowserRouter([
   // Awam — awam, tiada auth
   { path: "/", element: <AwamLayout />, children: awamRoutes },
 
-  // Guru / Juri / Admin — prefix + gate ikut role (cermin middleware role:*)
+  // Mentor / Juri / Admin — prefix + gate ikut role (cermin middleware role:*)
   {
-    path: "/guru",
-    element: <ProtectedRoute role="guru"><GuruLayout /></ProtectedRoute>,
-    children: guruRoutes,
+    path: "/mentor",
+    element: <ProtectedRoute role="mentor"><MentorLayout /></ProtectedRoute>,
+    children: mentorRoutes,
   },
   {
-    path: "/pelajar",
-    element: <ProtectedRoute role="pelajar"><PelajarLayout /></ProtectedRoute>,
-    children: pelajarRoutes,
+    path: "/participant",
+    element: <ProtectedRoute role="participant"><ParticipantLayout /></ProtectedRoute>,
+    children: participantRoutes,
   },
   {
     path: "/juri",
@@ -449,7 +449,7 @@ export default function ProtectedRoute({ role, children }) {
 ```
 
 **Peraturan:**
-- Prefix role ditetapkan **sekali** di `index.jsx` (bukan diulang dalam setiap fail) — seperti `Route::prefix('guru')` Laravel.
+- Prefix role ditetapkan **sekali** di `index.jsx` (bukan diulang dalam setiap fail) — seperti `Route::prefix('mentor')` Laravel.
 - Layout role jadi *parent element*; view dirender dalam `<Outlet />` layout tersebut.
 - Gate route di frontend adalah UX sahaja — **penguatkuasaan sebenar tetap di backend** (role middleware + Sanctum).
 

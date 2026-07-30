@@ -189,6 +189,22 @@ Several proposal drafts produced under `docs/proposal-drafts/`:
 
 ---
 
+## 2026-05-31 — Roles renamed to Mentor/Participant + DB schema plan
+
+**Context:** User received the previous edition's database (`junior_innovathon_ori.sql`, 11 tables, MySQL/Laravel). Analysed it and aligned our model on its concepts.
+
+**Decisions:**
+1. **Role rename** — `guru` → **`mentor`**, `pelajar` → **`participant`** (matches legacy `mentors`/`participants` tables and the Mentor–Participant domain concept). `juri` / `admin` / `awam` unchanged. Propagated across backend + frontend + CLAUDE.md (routes, controllers, layouts, views, api modules, ProtectedRoute).
+2. **Schema doc** — new `docs/backend/schema.md`: ERD (Mermaid) + full Eloquent relationship plan, normalised from the legacy dump.
+3. **Naming convention** — DB tables, columns, models, relationships kept in **English**; BM only for prose. (User instruction.)
+4. **Normalisation from legacy:** real foreign keys (`foreignId()->constrained()`), `_id` suffix, rename reserved words (`desc`→`description`, `table`→`table_no`, `primary/secondary`→`count_*`), single `users` table + Spatie roles, `judge` int → `judge_id`.
+5. **Scoring** — moved out of `teams` columns into a dedicated **`scores`** table (stage: state|national) to support multi-judge history + real-time studio LED scoring (§3.6.4).
+6. **Data reuse** — `schools` (11,716 rows), `states`, `races`, `categories` importable directly. **Legacy password hashes NOT carried over** (bcrypt `$2y$10`, valid but fresh accounts + set-password preferred for gov security). PII (IC/tel/email) encrypted at-rest + audited.
+
+**Artifact:** `docs/backend/schema.md`.
+
+---
+
 ## Open questions for URS sessions with RTM
 
 These were flagged in earlier drafts and need resolution during URS sessions:
