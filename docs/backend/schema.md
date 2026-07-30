@@ -119,7 +119,27 @@ Race     ─hasMany→ Participant, Mentor
 Mentor   ─hasMany→ Team
 Team     ─belongsTo→ Mentor, School, Category, judge(User)
          ─hasMany→ Participant, Video, Slide, Score
+
+JudgingSession  ─belongsTo→ controller(User), Team(active)
+                ─hasMany→ Score            (sesi live yang dipacu Controller)
 ```
+
+> **Role operasi (`controller`, `broadcaster`, `admin`)** tiada jadual profil sendiri — mereka User dengan role Spatie sahaja. `controller` memacu **`judging_sessions`** (pilih projek aktif → juri diberi UI markah); `broadcaster` hanya **membaca** markah gabungan (`scores`) sebagai overlay OBS (read-only, tiada tulisan DB).
+
+### JudgingSession (baharu — kawalan sesi live oleh Controller)
+
+```php
+// app/Models/JudgingSession.php
+class JudgingSession extends Model
+{
+    // controller pilih team aktif; status: waiting|scoring|revealed|closed
+    public function controller(): BelongsTo { return $this->belongsTo(User::class, 'controller_id'); }
+    public function team(): BelongsTo       { return $this->belongsTo(Team::class, 'active_team_id'); }
+    public function scores(): HasMany       { return $this->hasMany(Score::class); }
+}
+```
+
+> `Score` menambah `judging_session_id` (nullable) supaya markah studio live dikaitkan dengan sesi; markah saringan zon (offline) biarkan null.
 
 ---
 

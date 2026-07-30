@@ -31,6 +31,8 @@ Semua endpoint API **wajib** berada di bawah prefix versi. Versi semasa ialah **
 ```
 https://juniorinnovathon.rtm.gov.my/api/v1/mentor/pendaftaran
 https://juniorinnovathon.rtm.gov.my/api/v1/jury/penjurian
+https://juniorinnovathon.rtm.gov.my/api/v1/controller/sesi
+https://juniorinnovathon.rtm.gov.my/api/v1/broadcaster/scoreboard
 https://juniorinnovathon.rtm.gov.my/api/v1/admin/pengguna
 https://juniorinnovathon.rtm.gov.my/api/v1/public/sijil/{kod}
 ```
@@ -56,6 +58,10 @@ Route::prefix('v1')->group(function () {
             ->group(base_path('routes/api/v1/participant.php'));
         Route::prefix('jury')->middleware('role:jury')
             ->group(base_path('routes/api/v1/jury.php'));
+        Route::prefix('controller')->middleware('role:controller')
+            ->group(base_path('routes/api/v1/controller.php'));
+        Route::prefix('broadcaster')->middleware('role:broadcaster')
+            ->group(base_path('routes/api/v1/broadcaster.php'));
         Route::prefix('admin')->middleware('role:admin')
             ->group(base_path('routes/api/v1/admin.php'));
     });
@@ -68,15 +74,19 @@ Route::prefix('v1')->group(function () {
 
 Sistem menggunakan **[Spatie laravel-permission](https://spatie.be/docs/laravel-permission)** untuk Role-Based Access Control (RBAC). Akses ke setiap *route* dikawal berdasarkan **role** pengguna.
 
-### Lima role asas (§ 3.2)
+### Tujuh role asas (§ 3.2)
 
 | Role | Slug | Keterangan |
 |---|---|---|
 | Mentor | `mentor` | Guru pembimbing — daftar & urus pasukan sekolah, peserta, muat naik bahan |
 | Participant | `participant` | Pelajar peserta — lihat pasukan sendiri, status penyertaan, jadual, sijil |
-| Jury | `jury` | Penjurian saringan zon + studio (markah real-time) |
+| Jury | `jury` | Penjurian saringan zon + studio — beri markah real-time (§ 3.6.4) |
+| Controller | `controller` | Pengawal sesi penjurian live — pilih projek untuk dinilai, memacu UI penandaan kepada 3 juri, kawal giliran/aliran projek semasa rakaman studio |
+| Broadcaster | `broadcaster` | Overlay siaran — paparan gabungan markah 3 juri secara live sebagai *browser source* untuk kanvas OBS (scoreboard read-only) |
 | Admin | `admin` | Pengurusan platform, kandungan CMS, laporan, pemantauan |
 | Public | `public` | Penonton portal public — sijil, verifikasi |
+
+> ⚠️ **Gotcha `controller`:** dalam namespace `App\Http\Controllers\Api\V1\Controller\`, rujukan `Controller` (base class) akan resolve ke kelas dalam namespace itu sendiri. **Wajib** `use App\Http\Controllers\Controller;` eksplisit dalam setiap controller role ini supaya `extends Controller` betul.
 
 > Catatan: `SuperAdmin` boleh dilaksana sebagai role berasingan atau `admin` + permission `*`. Keputusan akhir didokumen dalam `decisions-log.md` apabila scaffolding bermula.
 
@@ -228,6 +238,11 @@ app/Http/Controllers/
         ├── Jury/
         │   ├── SaringanController.php
         │   └── PenjurianController.php
+        ├── Controller/                 ← ⚠️ perlu `use …\Controllers\Controller;`
+        │   ├── SesiController.php
+        │   └── ProjekController.php
+        ├── Broadcaster/
+        │   └── ScoreboardController.php
         ├── Admin/
         │   ├── DashboardController.php
         │   ├── PenggunaController.php
@@ -342,6 +357,9 @@ app/Http/Requests/
         ├── Jury/
         │   └── PenjurianController/
         │       └── ScoreRequest.php
+        ├── Controller/
+        │   └── SesiController/
+        │       └── PilihProjekRequest.php
         └── Admin/
             └── PenggunaController/
                 ├── StoreRequest.php
@@ -491,12 +509,15 @@ backend/
 │   │   │       ├── Mentor/
 │   │   │       ├── Participant/
 │   │   │       ├── Jury/
+│   │   │       ├── Controller/
+│   │   │       ├── Broadcaster/
 │   │   │       ├── Admin/
 │   │   │       └── Public/
 │   │   ├── Requests/
 │   │   │   └── Api/V1/
 │   │   │       ├── Mentor/{ControllerName}/
 │   │   │       ├── Jury/{ControllerName}/
+│   │   │       ├── Controller/{ControllerName}/
 │   │   │       ├── Admin/{ControllerName}/
 │   │   │       └── Public/{ControllerName}/
 │   │   ├── Resources/
@@ -514,6 +535,8 @@ backend/
 │           ├── mentor.php
 │           ├── participant.php
 │           ├── jury.php
+│           ├── controller.php
+│           ├── broadcaster.php
 │           ├── admin.php
 │           └── public.php
 ├── config/

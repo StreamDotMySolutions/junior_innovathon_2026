@@ -205,6 +205,22 @@ Several proposal drafts produced under `docs/proposal-drafts/`:
 
 ---
 
+## 2026-05-31 — Role rename (jury/public) + two new operational roles
+
+**Context:** User refined the role vocabulary and added two studio-operations roles.
+
+**Decisions:**
+1. **Rename** `juri` → `jury`, `awam` → `public` (English slugs). BM prose "penjurian" preserved. Verified valid PHP namespace segments (PHP 8.4).
+2. **New role `controller`** — drives the **live judging session**: picks the active project → system presents the scoring UI to the 3 jury. Controls project turn/flow during studio recording. Backed by a new **`judging_sessions`** table (controller_id, active_team_id, status: waiting|scoring|revealed|closed).
+   - ⚠️ Namespace gotcha: `App\Http\Controllers\Api\V1\Controller\*` collides with Laravel's base `Controller` — requires explicit `use App\Http\Controllers\Controller;`.
+3. **New role `broadcaster`** — renders the **combined 3-jury score overlay** as an OBS **browser source** (fixed 1920×1080 canvas, transparent, read-only). Exempt from the mobile/desktop split rule (§4 frontend) — single layout, not a user device.
+4. **Total 7 roles:** Mentor / Participant / Jury / Controller / Broadcaster / Admin / Public. Propagated across backend + frontend conventions, schema, CLAUDE.md.
+5. **Data model:** `controller`/`broadcaster`/`admin` are operational roles (User + Spatie, no profile table). Broadcaster does no DB writes. `scores` gains nullable `judging_session_id` (live studio scores link to a session; offline zone-screening scores stay null).
+
+**Artifacts:** `docs/backend/README.md`, `docs/backend/schema.md`, `docs/frontend/README.md`, `CLAUDE.md`.
+
+---
+
 ## Open questions for URS sessions with RTM
 
 These were flagged in earlier drafts and need resolution during URS sessions:
