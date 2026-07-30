@@ -37,7 +37,27 @@
     "sponsors_title": "Penaja & Rakan Kongsi",
     "sponsors_note": "Anjuran bersama agensi kerajaan dan rakan industri.",
     "cta_banner_title": "Sedia untuk menyertai?",
-    "cta_banner_body": "Daftar pasukan sekolah anda dan sertai pertandingan inovasi terbesar untuk pelajar Malaysia."
+    "cta_banner_body": "Daftar pasukan sekolah anda dan sertai pertandingan inovasi terbesar untuk pelajar Malaysia.",
+    "gallery_title": "Sorotan Edisi Terdahulu",
+    "gallery_subtitle": "Detik-detik inovasi, kreativiti, dan semangat pelajar dari studio.",
+    "faq_title": "Soalan Lazim",
+    "faq": {
+      "q1": "Siapa yang layak menyertai?",
+      "a1": "Pelajar sekolah rendah dan menengah yang berdaftar dalam Pangkalan Data Sekolah KPM. Setiap pasukan terdiri daripada TIGA pelajar dan SEORANG guru pembimbing.",
+      "q2": "Bagaimana cara mendaftar?",
+      "a2": "Guru pembimbing mendaftar akaun, membuat pasukan untuk satu Event, menambah peserta, dan menghantar satu projek beserta video dan slaid.",
+      "q3": "Apakah yang perlu dihantar?",
+      "a3": "Satu video projek berdurasi 3 minit (MP4) dan sehingga 5 slaid persembahan bagi setiap projek.",
+      "q4": "Adakah penyertaan dikenakan bayaran?",
+      "a4": "Tidak. Penyertaan Junior Innovathon 2026 adalah percuma sepenuhnya."
+    },
+    "contact_title": "Hubungi Kami",
+    "contact_subtitle": "Ada pertanyaan? Hubungi urus setia pertandingan.",
+    "contact": {
+      "email": "E-mel",
+      "phone": "Telefon",
+      "address": "Alamat"
+    }
   },
   "rules": {
     "title": "Syarat Pertandingan",

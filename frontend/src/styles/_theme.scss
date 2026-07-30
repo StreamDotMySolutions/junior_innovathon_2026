@@ -47,3 +47,8 @@
 .ji-episode {
   border-left: 4px solid var(--ji-amber);
 }
+
+// Item galeri (tinggi ditetapkan ikut breakpoint di _mobile/_desktop)
+.ji-gallery-item {
+  width: 100%;
+}

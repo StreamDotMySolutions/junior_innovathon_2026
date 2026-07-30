@@ -37,7 +37,27 @@
     "sponsors_title": "Sponsors & Partners",
     "sponsors_note": "Jointly organised with government agencies and industry partners.",
     "cta_banner_title": "Ready to take part?",
-    "cta_banner_body": "Register your school team and join Malaysia's biggest innovation competition for students."
+    "cta_banner_body": "Register your school team and join Malaysia's biggest innovation competition for students.",
+    "gallery_title": "Highlights from Past Editions",
+    "gallery_subtitle": "Moments of innovation, creativity, and student spirit from the studio.",
+    "faq_title": "Frequently Asked Questions",
+    "faq": {
+      "q1": "Who is eligible to join?",
+      "a1": "Primary and secondary school students registered in the KPM School Database. Each team consists of THREE students and ONE mentor teacher.",
+      "q2": "How do I register?",
+      "a2": "The mentor teacher registers an account, creates a team for an Event, adds participants, and submits one project with a video and slides.",
+      "q3": "What must be submitted?",
+      "a3": "One 3-minute project video (MP4) and up to 5 presentation slides per project.",
+      "q4": "Is there an entry fee?",
+      "a4": "No. Entry to Junior Innovathon 2026 is completely free."
+    },
+    "contact_title": "Contact Us",
+    "contact_subtitle": "Have a question? Reach the competition secretariat.",
+    "contact": {
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address"
+    }
   },
   "rules": {
     "title": "Competition Rules",

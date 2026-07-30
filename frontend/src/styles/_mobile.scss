@@ -32,4 +32,9 @@
   .ji-sponsor-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  // Item galeri lebih pendek di telefon
+  .ji-gallery-item {
+    height: 130px;
+  }
 }

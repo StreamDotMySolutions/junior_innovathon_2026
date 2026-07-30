@@ -21,6 +21,24 @@ const EPISODES = [
 
 const SPONSORS = ["RTM", "KPM", "MDEC", "MCMC", "Penaja A", "Penaja B"];
 
+// Galeri placeholder (gradien) — akan diganti imej sebenar dari S3/CDN.
+const GALLERY = [
+  "linear-gradient(135deg,#0d3b66,#1e5a99)",
+  "linear-gradient(135deg,#ff6b35,#ffc107)",
+  "linear-gradient(135deg,#198754,#0dcaf0)",
+  "linear-gradient(135deg,#062c52,#0d3b66)",
+  "linear-gradient(135deg,#6c3baf, #1e5a99)",
+  "linear-gradient(135deg,#fd7e14,#ff6b35)",
+];
+
+const FAQ = ["1", "2", "3", "4"];
+
+const CONTACT = {
+  email: "juniorinnovathon@rtm.gov.my",
+  phone: "03-2288 4949",
+  address: "Angkasapuri, 50614 Kuala Lumpur",
+};
+
 /** Halaman Utama (public) — hero, tentang, 4 fasa, statistik, episod, penaja, CTA. */
 export default function Home() {
   const { t } = useTranslation();
@@ -143,6 +161,108 @@ export default function Home() {
                 {name}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Galeri sorotan */}
+      <section className="ji-section py-5 bg-white border-top">
+        <div className="container">
+          <h2 className="ji-section-title text-center mb-2">{t("home.gallery_title")}</h2>
+          <p className="text-center text-secondary mb-5">{t("home.gallery_subtitle")}</p>
+          <div className="row g-3">
+            {GALLERY.map((bg, i) => (
+              <div className="col-6 col-lg-4" key={i}>
+                <div
+                  className="rounded shadow-sm ji-gallery-item"
+                  style={{ background: bg }}
+                  role="img"
+                  aria-label={`${t("home.gallery_title")} ${i + 1}`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Soalan Lazim (FAQ) */}
+      <section className="ji-section py-5">
+        <div className="container">
+          <h2 className="ji-section-title text-center mb-5">{t("home.faq_title")}</h2>
+          <div className="row justify-content-center">
+            <div className="col-lg-9">
+              <div className="accordion" id="faqAccordion">
+                {FAQ.map((n, i) => (
+                  <div className="accordion-item" key={n}>
+                    <h3 className="accordion-header">
+                      <button
+                        className={`accordion-button${i === 0 ? "" : " collapsed"}`}
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target={`#faq${n}`}
+                        aria-expanded={i === 0 ? "true" : "false"}
+                        aria-controls={`faq${n}`}
+                      >
+                        {t(`home.faq.q${n}`)}
+                      </button>
+                    </h3>
+                    <div
+                      id={`faq${n}`}
+                      className={`accordion-collapse collapse${i === 0 ? " show" : ""}`}
+                      data-bs-parent="#faqAccordion"
+                    >
+                      <div className="accordion-body text-secondary">
+                        {t(`home.faq.a${n}`)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Hubungi Kami */}
+      <section className="ji-section py-5 bg-white border-top">
+        <div className="container">
+          <h2 className="ji-section-title text-center mb-2">{t("home.contact_title")}</h2>
+          <p className="text-center text-secondary mb-5">{t("home.contact_subtitle")}</p>
+          <div className="row g-4 justify-content-center">
+            <div className="col-md-4">
+              <div className="card border-0 shadow-sm h-100 text-center">
+                <div className="card-body">
+                  <div className="text-uppercase small text-muted mb-1">
+                    {t("home.contact.email")}
+                  </div>
+                  <a href={`mailto:${CONTACT.email}`} className="fw-semibold text-decoration-none">
+                    {CONTACT.email}
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card border-0 shadow-sm h-100 text-center">
+                <div className="card-body">
+                  <div className="text-uppercase small text-muted mb-1">
+                    {t("home.contact.phone")}
+                  </div>
+                  <a href={`tel:${CONTACT.phone.replace(/\s/g, "")}`} className="fw-semibold text-decoration-none">
+                    {CONTACT.phone}
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card border-0 shadow-sm h-100 text-center">
+                <div className="card-body">
+                  <div className="text-uppercase small text-muted mb-1">
+                    {t("home.contact.address")}
+                  </div>
+                  <span className="fw-semibold">{CONTACT.address}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

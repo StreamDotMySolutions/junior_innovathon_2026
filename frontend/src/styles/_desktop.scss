@@ -23,4 +23,9 @@
   .ji-sponsor-grid {
     grid-template-columns: repeat(6, 1fr);
   }
+
+  // Item galeri lebih tinggi di desktop
+  .ji-gallery-item {
+    height: 200px;
+  }
 }
