@@ -1,0 +1,61 @@
+{
+  "app": {
+    "name": "Junior Innovathon 2026",
+    "tagline": "Inovasi Pelajar untuk Masa Depan Malaysia"
+  },
+  "nav": {
+    "home": "Utama",
+    "rules": "Syarat Pertandingan",
+    "register": "Daftar",
+    "login": "Log Masuk",
+    "language": "Bahasa"
+  },
+  "home": {
+    "hero_title": "Inovasi Pelajar untuk Masa Depan Malaysia",
+    "hero_subtitle": "Pertandingan realiti inovasi peringkat kebangsaan untuk pelajar sekolah, anjuran Radio Televisyen Malaysia (RTM).",
+    "cta_register": "Daftar Penyertaan",
+    "cta_rules": "Baca Syarat",
+    "about_title": "Tentang Program",
+    "about_body": "Junior Innovathon 2026 mencungkil bakat inovasi pelajar sekolah rendah dan menengah seluruh Malaysia melalui pendaftaran dalam talian, saringan zon, dan penjurian studio secara langsung.",
+    "phase_title": "4 Fasa Pertandingan",
+    "phases": {
+      "registration": "Pendaftaran",
+      "screening": "Saringan Zon",
+      "studio": "Penjurian Studio",
+      "award": "Pengiktirafan"
+    }
+  },
+  "rules": {
+    "title": "Syarat Pertandingan",
+    "intro": "Sila baca syarat penyertaan dengan teliti sebelum mendaftar.",
+    "eligibility_title": "Kelayakan",
+    "eligibility": {
+      "team": "Setiap kumpulan terdiri daripada TIGA orang pelajar dan SEORANG guru sebagai pembimbing.",
+      "one_team": "Seorang peserta hanya dibenarkan menyertai SATU kumpulan sahaja.",
+      "school": "Peserta mestilah pelajar berdaftar di sekolah dalam Pangkalan Data Sekolah KPM."
+    },
+    "categories_title": "Kategori",
+    "categories": {
+      "primary": "Sekolah Rendah (7–12 tahun)",
+      "secondary": "Sekolah Menengah (13–17 tahun)",
+      "special": "Murid Berkeperluan Pendidikan Khas"
+    },
+    "submission_title": "Penyerahan",
+    "submission": {
+      "video": "Video projek berdurasi 3 minit (format MP4).",
+      "slides": "Sehingga 5 slaid persembahan projek.",
+      "deadline": "Penyerahan tertakluk kepada tarikh tutup pendaftaran Event."
+    },
+    "note": "Semua peraturan tertakluk kepada perubahan tanpa notis pemberitahuan terlebih dahulu."
+  },
+  "footer": {
+    "about": "Portal rasmi Junior Innovathon 2026, anjuran Radio Televisyen Malaysia (RTM) / Jabatan Penyiaran Malaysia.",
+    "quick_links": "Pautan Pantas",
+    "contact": "Hubungi Kami",
+    "rights": "Hak Cipta Terpelihara."
+  },
+  "common": {
+    "loading": "Sedang memuatkan…",
+    "back_home": "Kembali ke Utama"
+  }
+}

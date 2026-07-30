@@ -1,0 +1,53 @@
+// ─────────────────────────────────────────────────────────────
+// Junior Innovathon 2026 — tema Bootstrap 5 (LIGHT THEME)
+// Warna jenama RTM (selaras mockup proposal: navy + amber)
+// ─────────────────────────────────────────────────────────────
+
+// 1) Override pemboleh ubah Bootstrap SEBELUM import
+$primary:   #0d3b66;   // navy RTM
+$secondary: #4b5563;
+$success:   #198754;
+$warning:   #fd7e14;
+$danger:    #dc3545;
+$info:      #0dcaf0;
+
+$body-bg:    #f8f9fb;
+$body-color: #1a2332;
+
+$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto,
+  "Helvetica Neue", Arial, sans-serif;
+
+$enable-shadows: true;
+$border-radius:  0.5rem;
+
+// 2) Import Bootstrap penuh (light theme lalai)
+@import "bootstrap/scss/bootstrap";
+
+// 3) Token jenama tambahan (bukan Bootstrap)
+:root {
+  --ji-navy: #{$primary};
+  --ji-navy-dark: #062c52;
+  --ji-amber: #ffc107;
+  --ji-amber-warm: #ff6b35;
+}
+
+// 4) Utiliti ringkas peringkat aplikasi
+.ji-hero {
+  background: linear-gradient(135deg, var(--ji-navy) 0%, var(--ji-navy-dark) 100%);
+  color: #fff;
+}
+
+.ji-brand-mark {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ji-footer {
+  background: var(--ji-navy-dark);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ji-section-title {
+  font-weight: 700;
+  color: var(--ji-navy);
+}
