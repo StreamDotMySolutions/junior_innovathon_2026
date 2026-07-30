@@ -18,7 +18,7 @@ Dokumen ini menetapkan **konvensyen wajib** untuk frontend ReactJS. Pasangan kep
 |---|---|---|
 | 1 | **ReactJS (JS sahaja)** | React 18 + Vite + JSX. **Tiada TypeScript.** |
 | 2 | **Bootstrap 5** | CSS framework — diimport via SCSS untuk tema RTM |
-| 3 | **Layout ikut role** | Layout berbeza untuk Mentor / Juri / Admin / Awam |
+| 3 | **Layout ikut role** | Layout berbeza untuk Mentor / Jury / Admin / Public |
 | 4 | **Mobile vs Desktop berasingan** | Setiap role ada fail layout mobile & desktop yang berasingan |
 | 5 | **Axios** | Satu instance terpusat untuk semua panggilan API |
 | 6 | **Env config** | Semua konfigurasi dalam `.env` (Vite `VITE_*`) |
@@ -65,15 +65,15 @@ src/layouts/
 ├── participant/
 │   ├── ParticipantLayoutDesktop.jsx
 │   └── ParticipantLayoutMobile.jsx
-├── juri/
-│   ├── JuriLayoutDesktop.jsx
-│   └── JuriLayoutMobile.jsx
+├── jury/
+│   ├── JuryLayoutDesktop.jsx
+│   └── JuryLayoutMobile.jsx
 ├── admin/
 │   ├── AdminLayoutDesktop.jsx
 │   └── AdminLayoutMobile.jsx
-└── awam/
-    ├── AwamLayoutDesktop.jsx
-    └── AwamLayoutMobile.jsx
+└── public/
+    ├── PublicLayoutDesktop.jsx
+    └── PublicLayoutMobile.jsx
 ```
 
 ### Resolver berdasarkan breakpoint
@@ -109,7 +109,7 @@ export default function MentorLayout(props) {
 **Peraturan:**
 - Fail mobile mengandungi navigasi mudah alih (offcanvas / bottom nav); desktop guna sidebar penuh.
 - Layout role dikaitkan dengan route melalui `ProtectedRoute` (§ 8 / router).
-- Juri studio (tablet) dan Mentor (telefon) adalah kes utama mobile — § scale targets.
+- Jury studio (tablet) dan Mentor (telefon) adalah kes utama mobile — § scale targets.
 
 ---
 
@@ -159,11 +159,11 @@ src/api/
 ├── participant/
 │   ├── pasukan.js
 │   └── sijil.js
-├── juri/
+├── jury/
 │   └── penjurian.js
 ├── admin/
 │   └── pengguna.js
-└── awam/
+└── public/
     └── sijil.js
 ```
 
@@ -225,10 +225,10 @@ Pemetaan konvensyen Laravel → React (JS):
 | Perkara | Konvensyen Laravel | Terjemahan React (projek ini) | Contoh |
 |---|---|---|---|
 | Kelas (Controller/Model) | **StudlyCase** | Komponen & Layout → **PascalCase** `.jsx` | `MentorLayoutDesktop.jsx`, `Pendaftaran.jsx` |
-| Folder views | **snake_case**, ikut domain | Folder `views/` & `layouts/` ikut **role** (huruf kecil) | `views/mentor/`, `layouts/juri/` |
+| Folder views | **snake_case**, ikut domain | Folder `views/` & `layouts/` ikut **role** (huruf kecil) | `views/mentor/`, `layouts/jury/` |
 | Method / fungsi | **camelCase** | Fungsi & hooks → **camelCase** | `daftarPasukan()`, `useIsMobile()` |
 | Fail bukan-kelas (helpers) | huruf kecil | Modul utiliti → huruf kecil `.js` | `http.js`, `pendaftaran.js`, `format.js` |
-| Route / URL | **kebab-case** | Path React Router → **kebab-case** | `/juri/penjurian-studio` |
+| Route / URL | **kebab-case** | Path React Router → **kebab-case** | `/jury/penjurian-studio` |
 | Pemboleh ubah env | **UPPER_SNAKE** | `VITE_` + **UPPER_SNAKE** | `VITE_API_URL` |
 | Pembekal/Context | StudlyCase | Context → **PascalCase** | `AuthContext`, `AuthProvider` |
 
@@ -250,14 +250,14 @@ src/views/
 │   ├── Dashboard.jsx
 │   ├── PasukanSaya.jsx
 │   └── SijilSaya.jsx
-├── juri/
+├── jury/
 │   ├── SaringanZon.jsx
 │   └── PenjurianStudio.jsx
 ├── admin/
 │   ├── Dashboard.jsx
 │   ├── Pengguna.jsx
 │   └── Laporan.jsx
-└── awam/
+└── public/
     ├── Landing.jsx
     └── SijilSemak.jsx
 ```
@@ -306,9 +306,9 @@ frontend/
     │   └── routes/
     │       ├── mentor.jsx
     │       ├── participant.jsx
-    │       ├── juri.jsx
+    │       ├── jury.jsx
     │       ├── admin.jsx
-    │       └── awam.jsx
+    │       └── public.jsx
     ├── layouts/                   ← layout ikut role + mobile/desktop (§3, §4)
     ├── views/                     ← "views" ikut role (§8)
     ├── components/                ← komponen UI boleh guna semula
@@ -334,9 +334,9 @@ src/router/
 └── routes/
     ├── mentor.jsx           ← (cermin routes/api/v1/mentor.php)
     ├── participant.jsx
-    ├── juri.jsx
+    ├── jury.jsx
     ├── admin.jsx
-    └── awam.jsx
+    └── public.jsx
 ```
 
 ### Konvensyen URL — resourceful (ikut Laravel)
@@ -349,7 +349,7 @@ URL frontend memetakan corak URI resourceful Laravel. Prefix role, kebab-case, p
 | Borang cipta | `GET /mentor/pasukan/create` | `/mentor/pasukan/create` | `PasukanCipta.jsx` |
 | Butiran (show) | `GET /mentor/pasukan/{pasukan}` | `/mentor/pasukan/:pasukan` | `PasukanButiran.jsx` |
 | Borang edit | `GET /mentor/pasukan/{pasukan}/edit` | `/mentor/pasukan/:pasukan/edit` | `PasukanEdit.jsx` |
-| Tindakan khas | — | `/juri/penjurian-studio` | `PenjurianStudio.jsx` |
+| Tindakan khas | — | `/jury/penjurian-studio` | `PenjurianStudio.jsx` |
 
 > Nota: SPA hanya ada navigasi jenis-GET; `store`/`update`/`destroy` (POST/PUT/DELETE) dibuat melalui modul Axios (§5). Tapi **corak URI dikekalkan** supaya selari dengan backend.
 
@@ -385,22 +385,22 @@ export default [
 // src/router/index.jsx   (cermin routes/api.php — prefix + middleware group)
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute.jsx";
-import AwamLayout  from "@/layouts/awam";
+import PublicLayout  from "@/layouts/public";
 import MentorLayout  from "@/layouts/mentor";
 import ParticipantLayout from "@/layouts/participant";
-import JuriLayout  from "@/layouts/juri";
+import JuryLayout  from "@/layouts/jury";
 import AdminLayout from "@/layouts/admin";
-import awamRoutes  from "./routes/awam.jsx";
+import publicRoutes  from "./routes/public.jsx";
 import mentorRoutes  from "./routes/mentor.jsx";
 import participantRoutes from "./routes/participant.jsx";
-import juriRoutes  from "./routes/juri.jsx";
+import juryRoutes  from "./routes/jury.jsx";
 import adminRoutes from "./routes/admin.jsx";
 
 export const router = createBrowserRouter([
-  // Awam — awam, tiada auth
-  { path: "/", element: <AwamLayout />, children: awamRoutes },
+  // Public — public, tiada auth
+  { path: "/", element: <PublicLayout />, children: publicRoutes },
 
-  // Mentor / Juri / Admin — prefix + gate ikut role (cermin middleware role:*)
+  // Mentor / Jury / Admin — prefix + gate ikut role (cermin middleware role:*)
   {
     path: "/mentor",
     element: <ProtectedRoute role="mentor"><MentorLayout /></ProtectedRoute>,
@@ -412,9 +412,9 @@ export const router = createBrowserRouter([
     children: participantRoutes,
   },
   {
-    path: "/juri",
-    element: <ProtectedRoute role="juri"><JuriLayout /></ProtectedRoute>,
-    children: juriRoutes,
+    path: "/jury",
+    element: <ProtectedRoute role="jury"><JuryLayout /></ProtectedRoute>,
+    children: juryRoutes,
   },
   {
     path: "/admin",

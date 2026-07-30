@@ -7,7 +7,7 @@
 > **Konvensyen:** Nama **jadual, kolum, model, dan relationship — English**. Prosa penerangan BM.
 > **Memenuhi:** § 3.2.5 (pendaftaran), § 3.6 (penjurian), § 3.2.5(c) (sijil)
 
-Dokumen ini menetapkan skema pangkalan data dan pelan **Eloquent ORM relationship** untuk projek. Struktur diambil daripada database edisi lama, kemudian **dinormalisasi** kepada konvensyen Laravel: foreign key sebenar, penamaan `snake_case` + suffix `_id`, elak *reserved words*, dan diselaraskan dengan 5 role (Mentor / Participant / Juri / Admin / Awam).
+Dokumen ini menetapkan skema pangkalan data dan pelan **Eloquent ORM relationship** untuk projek. Struktur diambil daripada database edisi lama, kemudian **dinormalisasi** kepada konvensyen Laravel: foreign key sebenar, penamaan `snake_case` + suffix `_id`, elak *reserved words*, dan diselaraskan dengan 5 role (Mentor / Participant / Jury / Admin / Public).
 
 ---
 
@@ -19,7 +19,7 @@ Dokumen ini menetapkan skema pangkalan data dan pelan **Eloquent ORM relationshi
 | Tiada foreign key | `foreignId()->constrained()` | Elak *orphan records*, cascade betul |
 | Reserved words `desc`, `table`, `primary`, `secondary` | `description`, `table_no`, `count_primary`, `count_secondary` | Elak backtick + konflik SQL |
 | `mentors.userid`, `participants.related_id` | `users.id` FK (`user_id`) | Satu jadual `users` + Spatie role |
-| `judge` (int) pada `teams` | `judge_id` → `users.id` (role `juri`) | Juri = User dengan role `juri` |
+| `judge` (int) pada `teams` | `judge_id` → `users.id` (role `jury`) | Jury = User dengan role `jury` |
 | Penjurian dalam kolum `teams` (`rank_state`, `rank_national`) | Jadual **`scores`** berasingan | § 3.6 saringan → studio; histori markah LED real-time |
 
 ---
@@ -30,7 +30,7 @@ Dokumen ini menetapkan skema pangkalan data dan pelan **Eloquent ORM relationshi
 erDiagram
     users ||--o| mentors : "has profile"
     users ||--o| participants : "has profile"
-    users ||--o{ scores : "judges (juri)"
+    users ||--o{ scores : "judges (jury)"
 
     states ||--o{ schools : has
     schools ||--o{ teams : hosts
@@ -109,7 +109,7 @@ erDiagram
 User (auth · Sanctum · Spatie roles)
  ├─ hasOne  Mentor        (role: mentor)
  ├─ hasOne  Participant   (role: participant)
- └─ hasMany Score         (role: juri — markah yang diberi)
+ └─ hasMany Score         (role: jury — markah yang diberi)
 
 State    ─hasMany→ School
 School   ─hasMany→ Team, Mentor
@@ -143,7 +143,7 @@ class User extends Authenticatable
         return $this->hasOne(Participant::class);
     }
 
-    // markah yang diberi oleh user ini sebagai juri
+    // markah yang diberi oleh user ini sebagai jury
     public function scores(): HasMany
     {
         return $this->hasMany(Score::class, 'judge_id');
@@ -267,7 +267,7 @@ Schema::create('scores', function (Blueprint $table) {
     $table->decimal('score', 6, 2);
     $table->json('rubric')->nullable();               // pecahan markah kriteria
     $table->timestamps();
-    $table->unique(['team_id', 'judge_id', 'stage']); // satu markah / juri / peringkat
+    $table->unique(['team_id', 'judge_id', 'stage']); // satu markah / jury / peringkat
 });
 ```
 
@@ -291,7 +291,7 @@ $team = Team::with(['scores' => fn ($q) => $q->where('stage', 'national')])
 ## Nota reka bentuk / keputusan
 
 1. **User ↔ profil (Mentor/Participant)** — satu jadual `users` (auth + Spatie role), profil demografi dalam jadual berasingan. `Participant.user_id` **nullable** (pelajar bawah umur mungkin tak perlu akaun login sendiri; boleh diuruskan oleh mentor).
-2. **Score jadual berasingan** — bukan kolum dalam `teams`. Menyokong penjurian pelbagai juri, histori, dan LED real-time (§ 3.6.4).
+2. **Score jadual berasingan** — bukan kolum dalam `teams`. Menyokong penjurian pelbagai jury, histori, dan LED real-time (§ 3.6.4).
 3. **Schools (11,716 baris)** — boleh **import terus** daripada data lama (jimat Fasa 1). Data rujukan, bukan PII.
 4. **PII** (`participants.ic`, `mentors.ic/tel/email`) — enkripsi at-rest (RDS KMS) + audit (middleware § 1.1). IC pelajar bawah umur = data sensitif kerajaan.
 5. **Password lama TIDAK dibawa masuk** — lihat keputusan migrasi dalam `decisions-log.md`. Akaun baharu + set-password.

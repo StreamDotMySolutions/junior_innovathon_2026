@@ -17,7 +17,7 @@ Dokumen ini melengkapi [`README.md`](./README.md). **Pest** adalah rangka kerja 
 | **Sintaks ringkas** | `it('…')->expect(…)` — kurang boilerplate berbanding PHPUnit class, lebih mudah dibaca semasa handover ke RTM (§ 3.14) |
 | **100% serasi PHPUnit** | Dibina atas PHPUnit; semua tooling Laravel (`RefreshDatabase`, factories, `actingAs`) berfungsi terus |
 | **Arch testing terbina** | **Boleh kuatkuasakan konvensyen senibina** (lihat § Arch) — peraturan dalam `README.md` jadi ujian, bukan setakat dokumen |
-| **Datasets** | Sesuai untuk uji *matrix akses role* (Guru/Juri/Admin/Awam) tanpa ulang kod |
+| **Datasets** | Sesuai untuk uji *matrix akses role* (Guru/Jury/Admin/Public) tanpa ulang kod |
 | **Coverage & parallel** | `--coverage` dan `--parallel` terbina; sesuai untuk gate CI |
 
 ---
@@ -47,11 +47,11 @@ tests/
 │       └── V1/
 │           ├── Guru/
 │           │   └── PendaftaranTest.php
-│           ├── Juri/
+│           ├── Jury/
 │           │   └── PenjurianTest.php
 │           ├── Admin/
 │           │   └── PenggunaTest.php
-│           └── Awam/
+│           └── Public/
 │               └── SijilTest.php
 ├── Unit/                            ← ujian Service (business logic, tiada HTTP)
 │   └── Services/
@@ -118,7 +118,7 @@ it('menguatkuasa akses role pada endpoint terlindung', function (string $role, i
 })->with([
     'admin diterima' => ['admin', 200],
     'mentor ditolak' => ['mentor', 403],
-    'juri ditolak'   => ['juri', 403],
+    'jury ditolak'   => ['jury', 403],
 ]);
 
 it('menolak tetamu tanpa token dengan 401', function () {

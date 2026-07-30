@@ -30,9 +30,9 @@ Semua endpoint API **wajib** berada di bawah prefix versi. Versi semasa ialah **
 
 ```
 https://juniorinnovathon.rtm.gov.my/api/v1/mentor/pendaftaran
-https://juniorinnovathon.rtm.gov.my/api/v1/juri/penjurian
+https://juniorinnovathon.rtm.gov.my/api/v1/jury/penjurian
 https://juniorinnovathon.rtm.gov.my/api/v1/admin/pengguna
-https://juniorinnovathon.rtm.gov.my/api/v1/awam/sijil/{kod}
+https://juniorinnovathon.rtm.gov.my/api/v1/public/sijil/{kod}
 ```
 
 **Prinsip:**
@@ -45,8 +45,8 @@ https://juniorinnovathon.rtm.gov.my/api/v1/awam/sijil/{kod}
 // routes/api.php — root versioning
 Route::prefix('v1')->group(function () {
     // Public — tiada auth
-    Route::prefix('awam')
-        ->group(base_path('routes/api/v1/awam.php'));
+    Route::prefix('public')
+        ->group(base_path('routes/api/v1/public.php'));
 
     // Authenticated
     Route::middleware('auth:sanctum')->group(function () {
@@ -54,8 +54,8 @@ Route::prefix('v1')->group(function () {
             ->group(base_path('routes/api/v1/mentor.php'));
         Route::prefix('participant')->middleware('role:participant')
             ->group(base_path('routes/api/v1/participant.php'));
-        Route::prefix('juri')->middleware('role:juri')
-            ->group(base_path('routes/api/v1/juri.php'));
+        Route::prefix('jury')->middleware('role:jury')
+            ->group(base_path('routes/api/v1/jury.php'));
         Route::prefix('admin')->middleware('role:admin')
             ->group(base_path('routes/api/v1/admin.php'));
     });
@@ -74,9 +74,9 @@ Sistem menggunakan **[Spatie laravel-permission](https://spatie.be/docs/laravel-
 |---|---|---|
 | Mentor | `mentor` | Guru pembimbing — daftar & urus pasukan sekolah, peserta, muat naik bahan |
 | Participant | `participant` | Pelajar peserta — lihat pasukan sendiri, status penyertaan, jadual, sijil |
-| Juri | `juri` | Penjurian saringan zon + studio (markah real-time) |
+| Jury | `jury` | Penjurian saringan zon + studio (markah real-time) |
 | Admin | `admin` | Pengurusan platform, kandungan CMS, laporan, pemantauan |
-| Awam | `awam` | Penonton portal awam — sijil, verifikasi |
+| Public | `public` | Penonton portal public — sijil, verifikasi |
 
 > Catatan: `SuperAdmin` boleh dilaksana sebagai role berasingan atau `admin` + permission `*`. Keputusan akhir didokumen dalam `decisions-log.md` apabila scaffolding bermula.
 
@@ -153,7 +153,7 @@ Middleware disusun dalam **3 lapisan**: global (semua `/api/v1`), kumpulan auth,
 | Middleware | Tujuan |
 |---|---|
 | `auth:sanctum` | Sahkan pengguna (session SPA / token) — § 6 |
-| `role:{mentor\|juri\|admin}` | Spatie — gate kasar ikut role — § 1 |
+| `role:{mentor\|jury\|admin}` | Spatie — gate kasar ikut role — § 1 |
 | `verified` | (Pilihan) pastikan emel disahkan sebelum akses |
 
 ```php
@@ -225,7 +225,7 @@ app/Http/Controllers/
         ├── Participant/
         │   ├── PasukanController.php
         │   └── SijilController.php
-        ├── Juri/
+        ├── Jury/
         │   ├── SaringanController.php
         │   └── PenjurianController.php
         ├── Admin/
@@ -233,7 +233,7 @@ app/Http/Controllers/
         │   ├── PenggunaController.php
         │   ├── CmsController.php
         │   └── LaporanController.php
-        └── Awam/
+        └── Public/
             ├── SijilController.php
             └── VerifikasiController.php
 ```
@@ -339,7 +339,7 @@ app/Http/Requests/
         │   │   └── UpdateRequest.php
         │   └── PenyertaanController/
         │       └── StoreRequest.php
-        ├── Juri/
+        ├── Jury/
         │   └── PenjurianController/
         │       └── ScoreRequest.php
         └── Admin/
@@ -432,14 +432,14 @@ Setiap controller method **mesti** return `JsonResponse`. **Tiada** view, redire
 
 **Laravel Sanctum** adalah tool autentikasi utama API.
 
-- **Mod SPA cookie session** untuk frontend React (same-domain) — CSRF-protected, sesuai untuk portal Mentor/Juri/Admin.
+- **Mod SPA cookie session** untuk frontend React (same-domain) — CSRF-protected, sesuai untuk portal Mentor/Jury/Admin.
 - **Personal access token** untuk integrasi/perkhidmatan (cth. chatbot, kiosk) jika perlu.
 - Guard `sanctum` diselaraskan dengan Spatie (`guard_name` = `sanctum`).
 
 ```php
 // Route auth dilindungi
 Route::middleware('auth:sanctum')->group(function () {
-    // … mentor / juri / admin
+    // … mentor / jury / admin
 });
 ```
 
@@ -452,7 +452,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 **Peraturan:**
 - Endpoint login/logout mengeluarkan/membatalkan session Sanctum.
-- Semua route bukan-awam mesti lalu `auth:sanctum` + middleware `role` (§ 1).
+- Semua route bukan-public mesti lalu `auth:sanctum` + middleware `role` (§ 1).
 - Token/session dikonfigurasi dengan expiry yang sesuai; logout membatalkan token.
 
 ---
@@ -490,15 +490,15 @@ backend/
 │   │   │   └── Api/V1/                  ← lapisan HTTP diversi (§0)
 │   │   │       ├── Mentor/
 │   │   │       ├── Participant/
-│   │   │       ├── Juri/
+│   │   │       ├── Jury/
 │   │   │       ├── Admin/
-│   │   │       └── Awam/
+│   │   │       └── Public/
 │   │   ├── Requests/
 │   │   │   └── Api/V1/
 │   │   │       ├── Mentor/{ControllerName}/
-│   │   │       ├── Juri/{ControllerName}/
+│   │   │       ├── Jury/{ControllerName}/
 │   │   │       ├── Admin/{ControllerName}/
-│   │   │       └── Awam/{ControllerName}/
+│   │   │       └── Public/{ControllerName}/
 │   │   ├── Resources/
 │   │   └── Middleware/
 │   ├── Services/                        ← TIDAK diversi (shared) (§3)
@@ -513,9 +513,9 @@ backend/
 │       └── v1/
 │           ├── mentor.php
 │           ├── participant.php
-│           ├── juri.php
+│           ├── jury.php
 │           ├── admin.php
-│           └── awam.php
+│           └── public.php
 ├── config/
 │   ├── sanctum.php
 │   └── permission.php

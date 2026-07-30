@@ -58,7 +58,7 @@ Plus `docs/NGeP-QT-Documents/` (procurement terms, sample letters) and `docs/Fin
 | Database | **MySQL 8** (on RDS Multi-AZ) | Mandated by tender |
 | Cache & queue | **Redis** (on ElastiCache Multi-AZ) | Our choice |
 | Auth | **Laravel Sanctum** SPA cookie session | Same-domain SPA pattern |
-| Roles | **Spatie laravel-permission** | 5 roles: Mentor / Participant / Juri / Admin / Awam |
+| Roles | **Spatie laravel-permission** | 5 roles: Mentor / Participant / Jury / Admin / Public |
 | Real-time | Polling (MVP) → Reverb later | Cheaper for studio LED scoring |
 | AI chatbot | **OpenAI GPT-4o-mini** + RAG | User confirmed in earlier session |
 | Streaming | **nginx-rtmp on EC2** + ffmpeg HLS → S3 → CDN | Studio live + participant VOD |
@@ -76,9 +76,9 @@ Plus `docs/NGeP-QT-Documents/` (procurement terms, sample letters) and `docs/Fin
 Presentation Tier (React SPA on S3 + CloudFront)
   ├── Mentor (teacher / submitter)
   ├── Participant (student participant)
-  ├── Juri (judge)
+  ├── Jury (judge)
   ├── Admin
-  └── Awam (public)
+  └── Public (public)
             │
             ▼  HTTPS · JSON API · Cookie session
 Application Tier (Laravel on ECS Fargate, Multi-AZ in ap-southeast-5)
@@ -150,7 +150,7 @@ aws cloudfront create-invalidation --distribution-id ETTFYVJNQE52L --paths "/*" 
 - **Backups**: daily / weekly / monthly — § 3.11.4(a)
 - **Security**: SSL, DDoS, firewall, IDS, 24/7 monitoring — § 3.8.1
 - **Staff vetting**: CGSO E-Vetting; no Rohingya on gov premises — § 2.1.8, § 2.3.1
-- **Training**: 1 session × 4 SuperAdmin + 1 session × 50 juri/content users — § 3.9
+- **Training**: 1 session × 4 SuperAdmin + 1 session × 50 jury/content users — § 3.9
 - **Deliverables**: Admin Manual + Technical Manual (2 hardcopies + softcopy each), UAT + FAT docs — § 3.10, § 3.13
 
 ## Timeline anchors
