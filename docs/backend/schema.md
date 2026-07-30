@@ -120,20 +120,20 @@ Mentor   ─hasMany→ Team
 Team     ─belongsTo→ Mentor, School, Category, judge(User)
          ─hasMany→ Participant, Video, Slide, Score
 
-JudgingSession  ─belongsTo→ controller(User), Team(active)
-                ─hasMany→ Score            (sesi live yang dipacu Controller)
+JudgingSession  ─belongsTo→ scroller(User), Team(active)
+                ─hasMany→ Score            (sesi live yang dipacu Scroller)
 ```
 
-> **Role operasi (`controller`, `broadcaster`, `admin`)** tiada jadual profil sendiri — mereka User dengan role Spatie sahaja. `controller` memacu **`judging_sessions`** (pilih projek aktif → juri diberi UI markah); `broadcaster` hanya **membaca** markah gabungan (`scores`) sebagai overlay OBS (read-only, tiada tulisan DB).
+> **Role operasi (`scroller`, `broadcaster`, `admin`)** tiada jadual profil sendiri — mereka User dengan role Spatie sahaja. `scroller` memacu **`judging_sessions`** (pilih projek aktif → juri diberi UI markah); `broadcaster` hanya **membaca** markah gabungan (`scores`) sebagai overlay OBS (read-only, tiada tulisan DB).
 
-### JudgingSession (baharu — kawalan sesi live oleh Controller)
+### JudgingSession (baharu — kawalan sesi live oleh Scroller)
 
 ```php
 // app/Models/JudgingSession.php
 class JudgingSession extends Model
 {
-    // controller pilih team aktif; status: waiting|scoring|revealed|closed
-    public function controller(): BelongsTo { return $this->belongsTo(User::class, 'controller_id'); }
+    // scroller pilih team aktif; status: waiting|scoring|revealed|closed
+    public function scroller(): BelongsTo   { return $this->belongsTo(User::class, 'scroller_id'); }
     public function team(): BelongsTo       { return $this->belongsTo(Team::class, 'active_team_id'); }
     public function scores(): HasMany       { return $this->hasMany(Score::class); }
 }

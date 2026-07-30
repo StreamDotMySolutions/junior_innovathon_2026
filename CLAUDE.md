@@ -58,7 +58,7 @@ Plus `docs/NGeP-QT-Documents/` (procurement terms, sample letters) and `docs/Fin
 | Database | **MySQL 8** (on RDS Multi-AZ) | Mandated by tender |
 | Cache & queue | **Redis** (on ElastiCache Multi-AZ) | Our choice |
 | Auth | **Laravel Sanctum** SPA cookie session | Same-domain SPA pattern |
-| Roles | **Spatie laravel-permission** | 7 roles: Mentor / Participant / Jury / Controller / Broadcaster / Admin / Public |
+| Roles | **Spatie laravel-permission** | 7 roles: Mentor / Participant / Jury / Scroller / Broadcaster / Admin / Public |
 | Real-time | Polling (MVP) → Reverb later | Cheaper for studio LED scoring |
 | AI chatbot | **OpenAI GPT-4o-mini** + RAG | User confirmed in earlier session |
 | Streaming | **nginx-rtmp on EC2** + ffmpeg HLS → S3 → CDN | Studio live + participant VOD |
@@ -77,7 +77,7 @@ Presentation Tier (React SPA on S3 + CloudFront)
   ├── Mentor (teacher / submitter)
   ├── Participant (student participant)
   ├── Jury (judge — live scoring)
-  ├── Controller (drives live judging session — picks project, cues jury UI)
+  ├── Scroller (drives live judging session — picks project, cues jury UI)
   ├── Broadcaster (combined-score overlay as OBS browser source)
   ├── Admin
   └── Public

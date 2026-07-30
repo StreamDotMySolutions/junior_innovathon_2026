@@ -18,7 +18,7 @@ Dokumen ini menetapkan **konvensyen wajib** untuk frontend ReactJS. Pasangan kep
 |---|---|---|
 | 1 | **ReactJS (JS sahaja)** | React 18 + Vite + JSX. **Tiada TypeScript.** |
 | 2 | **Bootstrap 5** | CSS framework — diimport via SCSS untuk tema RTM |
-| 3 | **Layout ikut role** | Layout berbeza untuk 7 role (Mentor / Participant / Jury / Controller / Broadcaster / Admin / Public) |
+| 3 | **Layout ikut role** | Layout berbeza untuk 7 role (Mentor / Participant / Jury / Scroller / Broadcaster / Admin / Public) |
 | 4 | **Mobile vs Desktop berasingan** | Setiap role ada fail layout mobile & desktop yang berasingan |
 | 5 | **Axios** | Satu instance terpusat untuk semua panggilan API |
 | 6 | **Env config** | Semua konfigurasi dalam `.env` (Vite `VITE_*`) |
@@ -68,9 +68,9 @@ src/layouts/
 ├── jury/
 │   ├── JuryLayoutDesktop.jsx
 │   └── JuryLayoutMobile.jsx
-├── controller/                  ← studio (desktop/tablet)
-│   ├── ControllerLayoutDesktop.jsx
-│   └── ControllerLayoutMobile.jsx
+├── scroller/                  ← studio (desktop/tablet)
+│   ├── ScrollerLayoutDesktop.jsx
+│   └── ScrollerLayoutMobile.jsx
 ├── broadcaster/                 ← overlay OBS: kanvas tetap, TIADA split mobile
 │   └── BroadcasterLayout.jsx
 ├── admin/
@@ -168,7 +168,7 @@ src/api/
 │   └── sijil.js
 ├── jury/
 │   └── penjurian.js
-├── controller/
+├── scroller/
 │   └── sesi.js               ← pilih projek, kawal giliran
 ├── broadcaster/
 │   └── scoreboard.js         ← polling markah gabungan 3 juri
@@ -264,7 +264,7 @@ src/views/
 ├── jury/
 │   ├── SaringanZon.jsx
 │   └── PenjurianStudio.jsx
-├── controller/
+├── scroller/
 │   ├── SesiKawalan.jsx        ← pilih projek → picu UI juri
 │   └── ProjekSenarai.jsx
 ├── broadcaster/
@@ -323,7 +323,7 @@ frontend/
     │       ├── mentor.jsx
     │       ├── participant.jsx
     │       ├── jury.jsx
-    │       ├── controller.jsx
+    │       ├── scroller.jsx
     │       ├── broadcaster.jsx
     │       ├── admin.jsx
     │       └── public.jsx
@@ -353,7 +353,7 @@ src/router/
     ├── mentor.jsx           ← (cermin routes/api/v1/mentor.php)
     ├── participant.jsx
     ├── jury.jsx
-    ├── controller.jsx
+    ├── scroller.jsx
     ├── broadcaster.jsx
     ├── admin.jsx
     └── public.jsx
@@ -409,14 +409,14 @@ import PublicLayout  from "@/layouts/public";
 import MentorLayout  from "@/layouts/mentor";
 import ParticipantLayout from "@/layouts/participant";
 import JuryLayout  from "@/layouts/jury";
-import ControllerLayout from "@/layouts/controller";
+import ScrollerLayout from "@/layouts/scroller";
 import BroadcasterLayout from "@/layouts/broadcaster";
 import AdminLayout from "@/layouts/admin";
 import publicRoutes  from "./routes/public.jsx";
 import mentorRoutes  from "./routes/mentor.jsx";
 import participantRoutes from "./routes/participant.jsx";
 import juryRoutes  from "./routes/jury.jsx";
-import controllerRoutes from "./routes/controller.jsx";
+import scrollerRoutes from "./routes/scroller.jsx";
 import broadcasterRoutes from "./routes/broadcaster.jsx";
 import adminRoutes from "./routes/admin.jsx";
 
@@ -424,7 +424,7 @@ export const router = createBrowserRouter([
   // Public — public, tiada auth
   { path: "/", element: <PublicLayout />, children: publicRoutes },
 
-  // Mentor / Participant / Jury / Controller / Broadcaster / Admin — prefix + gate ikut role (cermin middleware role:*)
+  // Mentor / Participant / Jury / Scroller / Broadcaster / Admin — prefix + gate ikut role (cermin middleware role:*)
   {
     path: "/mentor",
     element: <ProtectedRoute role="mentor"><MentorLayout /></ProtectedRoute>,
@@ -441,9 +441,9 @@ export const router = createBrowserRouter([
     children: juryRoutes,
   },
   {
-    path: "/controller",
-    element: <ProtectedRoute role="controller"><ControllerLayout /></ProtectedRoute>,
-    children: controllerRoutes,
+    path: "/scroller",
+    element: <ProtectedRoute role="scroller"><ScrollerLayout /></ProtectedRoute>,
+    children: scrollerRoutes,
   },
   {
     path: "/broadcaster",
