@@ -1,0 +1,49 @@
+// ─────────────────────────────────────────────────────────────
+// Token jenama + gaya KONGSI (shared) — tiada media query di sini.
+// Digunakan oleh mobile & desktop. Override khusus ada di
+// _mobile.scss dan _desktop.scss.
+// ─────────────────────────────────────────────────────────────
+
+:root {
+  --ji-navy: #0d3b66;
+  --ji-navy-dark: #062c52;
+  --ji-amber: #ffc107;
+  --ji-amber-warm: #ff6b35;
+}
+
+.ji-hero {
+  background: linear-gradient(135deg, var(--ji-navy) 0%, var(--ji-navy-dark) 100%);
+  color: #fff;
+}
+
+.ji-brand-mark {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ji-footer {
+  background: var(--ji-navy-dark);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ji-section-title {
+  font-weight: 700;
+  color: var(--ji-navy);
+}
+
+// Kad statistik (dikongsi; saiz font diubah ikut breakpoint)
+.ji-stat {
+  border: 0;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 0.75rem;
+}
+.ji-stat__value {
+  font-weight: 700;
+  line-height: 1;
+}
+
+// Kad episod studio
+.ji-episode {
+  border-left: 4px solid var(--ji-amber);
+}

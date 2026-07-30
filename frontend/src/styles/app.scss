@@ -1,6 +1,15 @@
 // ─────────────────────────────────────────────────────────────
-// Junior Innovathon 2026 — tema Bootstrap 5 (LIGHT THEME)
-// Warna jenama RTM (selaras mockup proposal: navy + amber)
+// Junior Innovathon 2026 — entri gaya utama (LIGHT THEME)
+//
+// Susunan penting:
+//   1) Override pemboleh ubah Bootstrap
+//   2) Import Bootstrap penuh (menyediakan mixin media-breakpoint-*)
+//   3) Token + gaya kongsi (_theme)
+//   4) Gaya khusus MOBILE (_mobile)  — max-width < lg
+//   5) Gaya khusus DESKTOP (_desktop) — min-width >= lg
+//
+// CSS mobile & desktop DIASINGKAN dalam fail berbeza (permintaan user);
+// mixin media-breakpoint-* Bootstrap kekal satu sumber kebenaran breakpoint.
 // ─────────────────────────────────────────────────────────────
 
 // 1) Override pemboleh ubah Bootstrap SEBELUM import
@@ -20,34 +29,14 @@ $font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto,
 $enable-shadows: true;
 $border-radius:  0.5rem;
 
-// 2) Import Bootstrap penuh (light theme lalai)
+// 2) Bootstrap penuh (light theme lalai) — bawa mixin media-breakpoint-*
 @import "bootstrap/scss/bootstrap";
 
-// 3) Token jenama tambahan (bukan Bootstrap)
-:root {
-  --ji-navy: #{$primary};
-  --ji-navy-dark: #062c52;
-  --ji-amber: #ffc107;
-  --ji-amber-warm: #ff6b35;
-}
+// 3) Kongsi (tiada media query)
+@import "theme";
 
-// 4) Utiliti ringkas peringkat aplikasi
-.ji-hero {
-  background: linear-gradient(135deg, var(--ji-navy) 0%, var(--ji-navy-dark) 100%);
-  color: #fff;
-}
+// 4) Mobile-sahaja (< lg)
+@import "mobile";
 
-.ji-brand-mark {
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.ji-footer {
-  background: var(--ji-navy-dark);
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.ji-section-title {
-  font-weight: 700;
-  color: var(--ji-navy);
-}
+// 5) Desktop-sahaja (>= lg)
+@import "desktop";

@@ -1,0 +1,26 @@
+// ─────────────────────────────────────────────────────────────
+// Gaya khusus DESKTOP — dikuatkuasa pada breakpoint Bootstrap `lg` (≥992px).
+// Guna min-width supaya "desktop-up" sahaja terjejas.
+// ─────────────────────────────────────────────────────────────
+
+@include media-breakpoint-up(lg) {
+  // Hero lebih lapang di desktop
+  .ji-hero .display-5 {
+    font-size: 3rem;
+  }
+
+  .ji-stat__value {
+    font-size: 2.5rem;
+  }
+
+  // Seksyen ada padding menegak lebih besar
+  .ji-section {
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
+  }
+
+  // Grid penaja: papar 6 setiap baris
+  .ji-sponsor-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}

@@ -23,7 +23,21 @@
       "screening": "Zone Screening",
       "studio": "Studio Judging",
       "award": "Recognition"
-    }
+    },
+    "stats_title": "Entries So Far",
+    "stats": {
+      "teams": "Teams",
+      "participants": "Participants",
+      "schools": "Schools",
+      "states": "States"
+    },
+    "episodes_title": "Schedule of 6 Studio Episodes",
+    "episodes_subtitle": "Live studio judging, broadcast on RTM.",
+    "episode": "Episode",
+    "sponsors_title": "Sponsors & Partners",
+    "sponsors_note": "Jointly organised with government agencies and industry partners.",
+    "cta_banner_title": "Ready to take part?",
+    "cta_banner_body": "Register your school team and join Malaysia's biggest innovation competition for students."
   },
   "rules": {
     "title": "Competition Rules",

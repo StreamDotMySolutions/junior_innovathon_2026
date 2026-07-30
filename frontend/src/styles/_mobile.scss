@@ -1,0 +1,35 @@
+// ─────────────────────────────────────────────────────────────
+// Gaya khusus MOBILE — dikuatkuasa di bawah breakpoint Bootstrap `lg`
+// (<992px). Guna max-width supaya "mobile/tablet-down" sahaja terjejas.
+// ─────────────────────────────────────────────────────────────
+
+@include media-breakpoint-down(lg) {
+  // Hero lebih padat di telefon
+  .ji-hero .display-5 {
+    font-size: 1.9rem;
+  }
+
+  .ji-hero .lead {
+    font-size: 1rem;
+  }
+
+  .ji-stat__value {
+    font-size: 1.75rem;
+  }
+
+  // Seksyen padding menegak lebih kecil
+  .ji-section {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  // CTA hero jadi penuh lebar & bertindan
+  .ji-hero .btn {
+    width: 100%;
+  }
+
+  // Grid penaja: 2 setiap baris di telefon
+  .ji-sponsor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

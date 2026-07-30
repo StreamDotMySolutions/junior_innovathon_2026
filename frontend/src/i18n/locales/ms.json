@@ -23,7 +23,21 @@
       "screening": "Saringan Zon",
       "studio": "Penjurian Studio",
       "award": "Pengiktirafan"
-    }
+    },
+    "stats_title": "Penyertaan Sehingga Hari Ini",
+    "stats": {
+      "teams": "Pasukan",
+      "participants": "Peserta",
+      "schools": "Sekolah",
+      "states": "Negeri"
+    },
+    "episodes_title": "Jadual 6 Episod Studio",
+    "episodes_subtitle": "Penjurian studio secara langsung, disiarkan di RTM.",
+    "episode": "Episod",
+    "sponsors_title": "Penaja & Rakan Kongsi",
+    "sponsors_note": "Anjuran bersama agensi kerajaan dan rakan industri.",
+    "cta_banner_title": "Sedia untuk menyertai?",
+    "cta_banner_body": "Daftar pasukan sekolah anda dan sertai pertandingan inovasi terbesar untuk pelajar Malaysia."
   },
   "rules": {
     "title": "Syarat Pertandingan",
